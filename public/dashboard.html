@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - موقع الاشتراكات</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 1.5rem 0;
+        }
+        
+        .sidebar-header {
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 1.5rem;
+        }
+        
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            transition: background 0.3s;
+        }
+        
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .header h1 {
+            color: #333;
+        }
+        
+        .logout-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: #ff5252;
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #6a11cb;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #666;
+        }
+        
+        .requests-table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .table-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .table-header h2 {
+            color: #333;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: right;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: #f9f9f9;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        tr:hover {
+            background: #f9f9f9;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        
+        .no-requests {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+        
+        .refresh-btn {
+            background: #6a11cb;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .refresh-btn:hover {
+            background: #5a0db3;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>لوحة التحكم</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active">طلبات الاشتراكات</a></li>
+                <li><a href="#">الإحصائيات</a></li>
+                <li><a href="#">الإعدادات</a></li>
+            </ul>
+        </div>
+        
+        <div class="main-content">
+            <div class="header">
+                <h1>طلبات الاشتراكات</h1>
+                <button id="logoutBtn" class="logout-btn">تسجيل الخروج</button>
+            </div>
+            
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalRequests">0</div>
+                    <div class="stat-label">إجمالي الطلبات</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="pendingRequests">0</div>
+                    <div class="stat-label">طلبات قيد الانتظار</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="netflixRequests">0</div>
+                    <div class="stat-label">طلبات نيتفلكس</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="watchitRequests">0</div>
+                    <div class="stat-label">طلبات واتش ات</div>
+                </div>
+            </div>
+            
+            <div class="requests-table">
+                <div class="table-header">
+                    <h2>الطلبات الأخيرة</h2>
+                    <button id="refreshBtn" class="refresh-btn">تحديث</button>
+                </div>
+                
+                <div id="requestsContainer">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>رقم الطلب</th>
+                                <th>الخدمة</th>
+                                <th>اسم الحساب</th>
+                                <th>البريد الإلكتروني</th>
+                                <th>رقم الهاتف</th>
+                                <th>رقم التحويل</th>
+                                <th>التاريخ</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requestsTableBody">
+                            <!-- سيتم ملء الجدول بالبيانات من خلال JavaScript -->
+                        </tbody>
+                    </table>
+                    <div id="noRequestsMessage" class="no-requests" style="display: none;">
+                        لا توجد طلبات حالياً
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const logoutBtn = document.getElementById('logoutBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const requestsTableBody = document.getElementById('requestsTableBody');
+        const noRequestsMessage = document.getElementById('noRequestsMessage');
+        const totalRequestsEl = document.getElementById('totalRequests');
+        const pendingRequestsEl = document.getElementById('pendingRequests');
+        const netflixRequestsEl = document.getElementById('netflixRequests');
+        const watchitRequestsEl = document.getElementById('watchitRequests');
+        
+        // تسجيل الخروج
+        logoutBtn.addEventListener('click', async function() {
+            try {
+                const response = await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': getCSRFToken()
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    window.location.href = '/login.html';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+        
+        // تحديث الطلبات
+        refreshBtn.addEventListener('click', loadRequests);
+        
+        // تحميل الطلبات
+        async function loadRequests() {
+            try {
+                const response = await fetch('/api/subscription-requests', {
+                    headers: {
+                        'X-CSRF-Token': getCSRFToken()
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayRequests(result.requests);
+                    updateStats(result.requests);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        
+        // عرض الطلبات في الجدول
+        function displayRequests(requests) {
+            if (requests.length === 0) {
+                requestsTableBody.innerHTML = '';
+                noRequestsMessage.style.display = 'block';
+                return;
+            }
+            
+            noRequestsMessage.style.display = 'none';
+            
+            requestsTableBody.innerHTML = requests.map(request => `
+                <tr>
+                    <td>${request.id}</td>
+                    <td>${request.service}</td>
+                    <td>${request.accountName}</td>
+                    <td>${request.email}</td>
+                    <td>${request.phone}</td>
+                    <td>${request.transferNumber}</td>
+                    <td>${new Date(request.timestamp).toLocaleString('ar-SA')}</td>
+                    <td><span class="status-pending">${request.status}</span></td>
+                </tr>
+            `).join('');
+        }
+        
+        // تحديث الإحصائيات
+        function updateStats(requests) {
+            totalRequestsEl.textContent = requests.length;
+            pendingRequestsEl.textContent = requests.filter(r => r.status === 'pending').length;
+            netflixRequestsEl.textContent = requests.filter(r => r.service === 'نيتفلكس').length;
+            watchitRequestsEl.textContent = requests.filter(r => r.service === 'واتش ات').length;
+        }
+        
+        // الحصول على CSRF Token من الكوكيز
+        function getCSRFToken() {
+            const name = 'XSRF-TOKEN=';
+            const decodedCookie = decodeURIComponent(document.cookie);
+            const ca = decodedCookie.split(';');
+            for(let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) === 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return '';
+        }
+        
+        // تحميل الطلبات عند فتح الصفحة
+        document.addEventListener('DOMContentLoaded', loadRequests);
+    </script>
+</body>
+</html>

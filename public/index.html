@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع الاشتراكات</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-right: 1.5rem;
+            transition: opacity 0.3s;
+        }
+        
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #ff6b6b;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #ff5252;
+        }
+        
+        .hero {
+            padding: 4rem 0;
+            text-align: center;
+            background: white;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+        
+        .services {
+            padding: 4rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2rem;
+            color: #333;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        
+        .service-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .service-img {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .service-content {
+            padding: 1.5rem;
+        }
+        
+        .service-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .service-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #6a11cb;
+            margin-bottom: 1rem;
+        }
+        
+        .service-desc {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        
+        .service-btn {
+            display: block;
+            text-align: center;
+            background: #6a11cb;
+            color: white;
+            padding: 0.7rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        .service-btn:hover {
+            background: #5a0db3;
+        }
+        
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            overflow: auto;
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .submit-btn {
+            background: #6a11cb;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+        
+        .submit-btn:hover {
+            background: #5a0db3;
+        }
+        
+        .success-message {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">اشتراكاتي</div>
+                <div class="nav-links">
+                    <a href="#services">الخدمات</a>
+                    <a href="#about">من نحن</a>
+                    <a href="#contact">اتصل بنا</a>
+                    <a href="/login.html" class="btn">تسجيل الدخول</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="container">
+            <h1>احصل على أفضل الاشتراكات بأفضل الأسعار</h1>
+            <p>نوفر لك اشتراكات منصات البث والشروحات التعليمية بأسعار تنافسية وخدمة عملاء متميزة</p>
+            <a href="#services" class="btn">استعرض الخدمات</a>
+        </div>
+    </section>
+    
+    <section id="services" class="services">
+        <div class="container">
+            <h2 class="section-title">خدماتنا</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-img" style="background-color: #E50914;"></div>
+                    <div class="service-content">
+                        <h3 class="service-title">نيتفلكس</h3>
+                        <div class="service-price">50 ريال/شهرياً</div>
+                        <p class="service-desc">اشتراك نيتفلكس كامل مع دعم 4K وأربعة شاشات متزامنة</p>
+                        <a href="#" class="service-btn" data-service="نيتفلكس">اطلب الآن</a>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-img" style="background-color: #00A8E1;"></div>
+                    <div class="service-content">
+                        <h3 class="service-title">واتش ات</h3>
+                        <div class="service-price">35 ريال/شهرياً</div>
+                        <p class="service-desc">اشتراك واتش ات مع جميع المحتويات الحصرية والجودة العالية</p>
+                        <a href="#" class="service-btn" data-service="واتش ات">اطلب الآن</a>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-img" style="background-color: #FFD300;"></div>
+                    <div class="service-content">
+                        <h3 class="service-title">شاهد</h3>
+                        <div class="service-price">25 ريال/شهرياً</div>
+                        <p class="service-desc">اشتراك شاهد VIP مع جميع المحتويات العربية والعالمية</p>
+                        <a href="#" class="service-btn" data-service="شاهد">اطلب الآن</a>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-img" style="background-color: #FF0000;"></div>
+                    <div class="service-content">
+                        <h3 class="service-title">يانجو بلاي</h3>
+                        <div class="service-price">40 ريال/شهرياً</div>
+                        <p class="service-desc">اشتراك يانجو بلاي مع جميع الميزات والمحتويات الحصرية</p>
+                        <a href="#" class="service-btn" data-service="يانجو بلاي">اطلب الآن</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <p>جميع الحقوق محفوظة &copy; 2023 موقع اشتراكاتي</p>
+        </div>
+    </footer>
+    
+    <!-- Modal لطلب الاشتراك -->
+    <div id="subscriptionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>طلب اشتراك جديد</h2>
+            <form id="subscriptionForm">
+                <input type="hidden" id="selectedService" name="service">
+                
+                <div class="form-group">
+                    <label for="accountName">اسم الحساب</label>
+                    <input type="text" id="accountName" name="accountName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">البريد الإلكتروني للحساب</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">رقم التليفون المسجل في الحساب</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transferNumber">رقم التحويل</label>
+                    <input type="text" id="transferNumber" name="transferNumber" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transferScreenshot">سكرين للتحويل (رابط الصورة)</label>
+                    <input type="text" id="transferScreenshot" name="transferScreenshot" required>
+                </div>
+                
+                <button type="submit" class="submit-btn">إرسال الطلب</button>
+            </form>
+            
+            <div id="successMessage" class="success-message">
+                تم استلام طلبك بنجاح وسيتم مراجعته قريباً
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // فتح وإغلاق المودال
+        const modal = document.getElementById('subscriptionModal');
+        const closeModal = document.querySelector('.close-modal');
+        const serviceBtns = document.querySelectorAll('.service-btn');
+        const selectedServiceInput = document.getElementById('selectedService');
+        const subscriptionForm = document.getElementById('subscriptionForm');
+        const successMessage = document.getElementById('successMessage');
+        
+        serviceBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const service = this.getAttribute('data-service');
+                selectedServiceInput.value = service;
+                modal.style.display = 'block';
+            });
+        });
+        
+        closeModal.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+        
+        window.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+        
+        // معالجة نموذج الطلب
+        subscriptionForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch('/api/subscription-request', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': getCSRFToken()
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    subscriptionForm.reset();
+                    subscriptionForm.style.display = 'none';
+                    successMessage.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                        subscriptionForm.style.display = 'block';
+                        successMessage.style.display = 'none';
+                    }, 3000);
+                } else {
+                    alert('حدث خطأ أثناء إرسال الطلب: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('حدث خطأ أثناء إرسال الطلب');
+            }
+        });
+        
+        // الحصول على CSRF Token من الكوكيز
+        function getCSRFToken() {
+            const name = 'XSRF-TOKEN=';
+            const decodedCookie = decodeURIComponent(document.cookie);
+            const ca = decodedCookie.split(';');
+            for(let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) === 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return '';
+        }
+    </script>
+</body>
+</html>
