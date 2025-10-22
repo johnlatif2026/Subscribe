@@ -14,8 +14,9 @@
     <!-- OG Tags لمشاركة الموقع على السوشيال ميديا -->
     <meta property="og:title" content="اشتراكاتي - اشتراكات أصلية بأفضل الأسعار">
     <meta property="og:description" content="اشترك في نيتفليكس، شاهد، واتش ات، ويانجو بلاي بأسعار تنافسية وخدمة متميزة.">
-    <meta property="og:image" content="https://subscribe-production.up.railway.app/images/logo.png">
+    <meta property="og:image" content="https://i.postimg.cc/Qd7HVSwN/logo.png">
     <meta property="og:url" content="https://subscribe-production.up.railway.app">
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/1t09Zj80/logo.png">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="ar_AR">
 
@@ -23,7 +24,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="اشتراكاتي - اشتراكات أصلية بأفضل الأسعار">
     <meta name="twitter:description" content="احصل على اشتراكات نيتفليكس وشاهد وواتش ات بأقل الأسعار.">
-    <meta name="twitter:image" content="https://subscribe-production.up.railway.app/images/logo.png">
+    <meta name="twitter:image" content="https://i.postimg.cc/Qd7HVSwN/logo.png">
 
     <!-- عنوان واضح للموقع -->
     <title>اشتراكاتي | اشتراكات نيتفليكس وشاهد وواتش ات بأفضل الأسعار</title>
@@ -509,6 +510,18 @@
                 grid-template-columns: 1fr;
             }
         }
+        .sub-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.subscription-card:hover .sub-logo {
+    transform: scale(1.1);
+}
+
     </style>
     
     <!-- Font Awesome للرموز -->
@@ -553,7 +566,8 @@
             <h2 class="section-title">الاشتراكات المتاحة</h2>
             <div class="subscriptions-grid">
                 <div class="subscription-card fade-in">
-                    <h3>نيتفلكس</h3>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Netflix Logo" class="sub-logo">
+                    <h3>Netflix</h3>
                     <div class="price">260 جنيه</div>
                     <div class="duration">شهري</div>
                     <p>استمتع بمشاهدة آلاف الأفلام والمسلسلات المميزة</p>
@@ -561,24 +575,29 @@
                 </div>
                 
                 <div class="subscription-card fade-in">
-                    <h3>واتش ات</h3>
-                    <div class="price">جنيه</div>
+                    <img src="data:image/png;base64,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"
+     alt="WATCH IT Logo" class="sub-logo">
+
+                    <h3>Watch IT</h3>
+                    <div class="price">تحت التحديث</div>
                     <div class="duration">شهري</div>
                     <p>منصة متخصصة في المسلسلات والأفلام العربية والعالمية</p>
                     <button class="btn" onclick="openOrderModal(2)" style="margin-top: 1rem;">اشترك الآن</button>
                 </div>
                 
                 <div class="subscription-card fade-in">
-                    <h3>شاهد</h3>
-                    <div class="price">جنيه</div>
+                    <img src="https://play-lh.googleusercontent.com/9q9uNUq1Xxr9D7jLPXMWWgnPUzYPzRLHaTXqjgRnB48eZax_zrucdCAJNlPEKhvqd6U=w240-h480-rw"alt="شاهد Logo" class="sub-logo">
+                    <h3>Shahid</h3>
+                    <div class="price">تحت التحديث</div>
                     <div class="duration">شهري</div>
                     <p>أكبر مكتبة للمحتوى العربي من أفلام ومسلسلات وبرامج</p>
                     <button class="btn" onclick="openOrderModal(3)" style="margin-top: 1rem;">اشترك الآن</button>
                 </div>
                 
                 <div class="subscription-card fade-in">
-                    <h3>يانجو بلاي</h3>
-                    <div class="price">جنيه</div>
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmDQeEVLpC3qKTnD9e3hGv1ifc0ofUzmJIrQ&s" alt="Yango Play Logo" class="sub-logo">
+                    <h3>Yango Play</h3>
+                    <div class="price">تحت التحديث</div>
                     <div class="duration">شهري</div>
                     <p>منصة ترفيهية شاملة بالمحتوى العربي والعالمي</p>
                     <button class="btn" onclick="openOrderModal(4)" style="margin-top: 1rem;">اشترك الآن</button>
