@@ -568,113 +568,796 @@
         </a>
     </div>
 
-    <header id="mainHeader">
-        <div class="container">
-            <div class="nav-container">
-                <div class="logo">
-                    <span>اشتراكاتي</span>
-                    <i class="fas fa-play-circle logo-icon"></i>
-                </div>
-                <ul class="nav-links">
-                    <li><a href="#home">الرئيسية</a></li>
-                    <li><a href="#subscriptions">الاشتراكات</a></li>
-                    <li><a href="#about">من نحن</a></li>
-                    <li><a href="#contact">اتصل بنا</a></li>
-                </ul>
-                <a href="#subscriptions" class="btn">اطلب الآن</a>
-            </div>
-        </div>
-    </header>
+<!-- 🔹 هيدر الموقع -->
+<header id="mainHeader">
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@500;700&display=swap");
 
-    <section class="hero" id="home">
-        <div class="container">
-            <h1>اشترك في أفضل المنصات بأفضل الأسعار</h1>
-            <p>نوفر لك اشتراكات في أشهر المنصات العالمية والعربية بأسعار تنافسية وخدمة عملاء متميزة على مدار الساعة</p>
-            <a href="#subscriptions" class="btn">عرض الاشتراكات</a>
-        </div>
-    </section>
+    /* إعدادات الهيدر العامة */
+    #mainHeader {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #f9fafb;
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+      transition: 0.3s;
+      font-family: "Cairo", sans-serif;
+    }
 
-    <section class="subscriptions" id="subscriptions">
-        <div class="container">
-            <h2 class="section-title">الاشتراكات المتاحة</h2>
-            <div class="subscriptions-grid">
-                <div class="subscription-card fade-in">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Netflix Logo" class="sub-logo">
-                    <h3>Netflix</h3>
-                    <div class="price">260 جنيه</div>
-                    <div class="duration">شهري</div>
-                    <p>استمتع بمشاهدة آلاف الأفلام والمسلسلات المميزة</p>
-                    <button class="btn" onclick="openOrderModal(1)" style="margin-top: 1rem;">اشترك الآن</button>
-                </div>
-                
-                <div class="subscription-card fade-in">
-                    <img src="data:image/png;base64,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"
-     alt="WATCH IT Logo" class="sub-logo">
+    /* عند التمرير يغمق الهيدر شوي */
+    #mainHeader.scrolled {
+      background: linear-gradient(135deg, #0a0f1a, #111827);
+    }
 
-                    <h3>Watch IT</h3>
-                    <div class="price">تحت التحديث</div>
-                    <div class="duration">شهري</div>
-                    <p>منصة متخصصة في المسلسلات والأفلام العربية والعالمية</p>
-                    <button class="btn" onclick="openOrderModal(2)" style="margin-top: 1rem;">اشترك الآن</button>
-                </div>
-                
-                <div class="subscription-card fade-in">
-                    <img src="https://play-lh.googleusercontent.com/9q9uNUq1Xxr9D7jLPXMWWgnPUzYPzRLHaTXqjgRnB48eZax_zrucdCAJNlPEKhvqd6U=w240-h480-rw"alt="شاهد Logo" class="sub-logo">
-                    <h3>Shahid</h3>
-                    <div class="price">تحت التحديث</div>
-                    <div class="duration">شهري</div>
-                    <p>أكبر مكتبة للمحتوى العربي من أفلام ومسلسلات وبرامج</p>
-                    <button class="btn" onclick="openOrderModal(3)" style="margin-top: 1rem;">اشترك الآن</button>
-                </div>
-                
-                <div class="subscription-card fade-in">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmDQeEVLpC3qKTnD9e3hGv1ifc0ofUzmJIrQ&s" alt="Yango Play Logo" class="sub-logo">
-                    <h3>Yango Play</h3>
-                    <div class="price">تحت التحديث</div>
-                    <div class="duration">شهري</div>
-                    <p>منصة ترفيهية شاملة بالمحتوى العربي والعالمي</p>
-                    <button class="btn" onclick="openOrderModal(4)" style="margin-top: 1rem;">اشترك الآن</button>
-                </div>
-            </div>
-        </div>
-    </section>
+    #mainHeader .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 0 25px;
+    }
 
-    <section class="hero" id="about">
-        <div class="container">
-            <h1>من نحن؟</h1>
-            <p>
-                نحن في <strong>اشتراكاتي</strong> نعمل على توفير تجربة مميزة وسهلة للحصول على 
-                اشتراكات أصلية وموثوقة لأشهر المنصات الترفيهية مثل 
-                <strong>Netflix</strong>، <strong>Shahid</strong>، <strong>Watch It</strong>، و<strong>Yango Play</strong> 
-                بأسعار تنافسية تناسب الجميع.
-            </p>
-            <p>
-                انطلقت فكرتنا من إيماننا بأن الترفيه يجب أن يكون في متناول الجميع، لذلك قمنا بإنشاء منصة تجمع بين 
-                السرعة، الأمان، والدعم الفني المتواصل لضمان أفضل تجربة للمستخدمين في الوطن العربي.
-            </p>
-            <p>
-                نسعى لأن نكون الخيار الأول لكل من يبحث عن اشتراك رقمي موثوق، بأسلوب سهل، وخدمة عملاء متجاوبة على مدار الساعة.
-            </p>
-        </div>
-    </section>
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-    <section class="hero" id="contact">
-        <div class="container">
-            <h1>اتصل بنا</h1>
-            <p>يسعدنا تواصلك معنا في أي وقت للاستفسارات أو الدعم الفني.</p>
-            <p>
-                واتساب:
-                <a href="https://wa.me/201274445091" target="_blank" style="color: #fff; text-decoration: underline;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" 
-                         alt="WhatsApp" 
-                         width="20" 
-                         style="vertical-align: middle; margin-left: 5px;">
-                    John Latif
-                </a><br>
-                🕒 ساعات العمل: يوميًا من 10 صباحًا إلى 10 مساءً بتوقيت القاهرة
-            </p>
-        </div>
-    </section>
+    /* اللوجو */
+    .logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #facc15;
+    }
+
+    .logo-icon {
+      color: #f87171;
+      margin-right: 8px;
+      font-size: 1.5rem;
+    }
+
+    /* الروابط */
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 25px;
+    }
+
+    .nav-links li a {
+      text-decoration: none;
+      color: #f9fafb;
+      font-weight: 500;
+      transition: 0.3s;
+      font-size: 1rem;
+    }
+
+    .nav-links li a:hover {
+      color: #facc15;
+    }
+
+    /* زر اطلب الآن */
+    .btn {
+      background: #facc15;
+      color: #111827;
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: #fbbf24;
+      transform: scale(1.05);
+    }
+
+    /* الموبايل */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        right: 20px;
+        background: #1e293b;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .menu-toggle {
+        display: block;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #facc15;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .menu-toggle {
+        display: none;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <div class="nav-container">
+      <div class="logo">
+        <i class="fas fa-play-circle logo-icon"></i>
+        <span>اشتراكاتي</span>
+      </div>
+
+      <ul class="nav-links">
+        <li><a href="#home">الرئيسية</a></li>
+        <li><a href="#subscriptions">الاشتراكات</a></li>
+        <li><a href="#about">من نحن</a></li>
+        <li><a href="#Privacy_Policy">سياسة الخصوصية</a></li>
+        <li><a href="#Terms&Conditions">الشروط والأحكام</a></li>
+        <li><a href="#contact">اتصل بنا</a></li>
+      </ul>
+
+      <a href="#subscriptions" class="btn">اطلب الآن</a>
+
+      <!-- زر القائمة للموبايل -->
+      <div class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // تغيير شكل الهيدر عند التمرير
+    window.addEventListener("scroll", function () {
+      const header = document.getElementById("mainHeader");
+      header.classList.toggle("scrolled", window.scrollY > 10);
+    });
+
+    // تفعيل القائمة على الموبايل
+    const toggle = document.getElementById("menuToggle");
+    const links = document.querySelector(".nav-links");
+
+    toggle.addEventListener("click", () => {
+      links.classList.toggle("active");
+    });
+  </script>
+</header>
+
+
+<!-- 🔹 قسم الرئيسية -->
+<section class="hero" id="home">
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@500;700&display=swap");
+
+    #home {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: #f9fafb;
+      padding: 120px 20px;
+      text-align: center;
+      font-family: "Cairo", sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* تأثير إضاءة خلفية */
+    #home::before {
+      content: "";
+      position: absolute;
+      top: -100px;
+      left: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(250, 204, 21, 0.12) 0%, transparent 70%);
+      filter: blur(60px);
+      animation: pulse 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse {
+      from {
+        transform: scale(1);
+      }
+      to {
+        transform: scale(1.2);
+      }
+    }
+
+    #home .container {
+      max-width: 900px;
+      margin: auto;
+      z-index: 2;
+      position: relative;
+    }
+
+    #home h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #facc15;
+      margin-bottom: 20px;
+      line-height: 1.4;
+      text-shadow: 0 0 20px rgba(250, 204, 21, 0.3);
+    }
+
+    #home p {
+      font-size: 1.2rem;
+      line-height: 2;
+      color: #e2e8f0;
+      margin-bottom: 40px;
+    }
+
+    #home .btn {
+      background: #facc15;
+      color: #111827;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 15px rgba(250, 204, 21, 0.4);
+    }
+
+    #home .btn:hover {
+      background: #fde047;
+      transform: scale(1.07);
+      box-shadow: 0 6px 20px rgba(250, 204, 21, 0.5);
+    }
+
+    /* للموبايل */
+    @media (max-width: 768px) {
+      #home {
+        padding: 100px 20px;
+      }
+
+      #home h1 {
+        font-size: 1.9rem;
+      }
+
+      #home p {
+        font-size: 1.05rem;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <h1>اشترك في أفضل المنصات بأفضل الأسعار</h1>
+    <p>
+      نوفر لك اشتراكات أصلية وموثوقة لأشهر المنصات العالمية والعربية بأسعار تنافسية،
+      مع دعم فني سريع على مدار الساعة لتجربة خالية من المتاعب.
+    </p>
+    <a href="#subscriptions" class="btn">عرض الاشتراكات</a>
+  </div>
+</section>
+
+
+<section class="subscriptions" id="subscriptions">
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@500;700&display=swap");
+
+    #subscriptions {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      padding: 100px 20px;
+      color: #f9fafb;
+      font-family: "Cairo", sans-serif;
+      text-align: center;
+    }
+
+    #subscriptions .section-title {
+      font-size: 2.2rem;
+      color: #facc15;
+      font-weight: 800;
+      margin-bottom: 60px;
+      text-shadow: 0 0 15px rgba(250, 204, 21, 0.4);
+    }
+
+    .subscriptions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .subscription-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(250, 204, 21, 0.1);
+      border-radius: 20px;
+      padding: 30px 20px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.25);
+      transition: all 0.4s ease;
+      backdrop-filter: blur(8px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .subscription-card:hover {
+      transform: translateY(-10px);
+      border-color: #facc15;
+      box-shadow: 0 0 35px rgba(250, 204, 21, 0.3);
+    }
+
+    .subscription-card::before {
+      content: "";
+      position: absolute;
+      top: -40%;
+      left: -40%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at center, rgba(250, 204, 21, 0.08), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .subscription-card:hover::before {
+      opacity: 1;
+    }
+
+    .subscription-card img.sub-logo {
+      width: 100px;
+      height: auto;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 5px rgba(250, 204, 21, 0.2));
+    }
+
+    .subscription-card h3 {
+      font-size: 1.4rem;
+      color: #facc15;
+      margin-bottom: 10px;
+    }
+
+    .subscription-card .price {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 10px 0;
+    }
+
+    .subscription-card .duration {
+      font-size: 1rem;
+      color: #e5e7eb;
+      margin-bottom: 10px;
+    }
+
+    .subscription-card p {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .subscription-card .btn {
+      background: #facc15;
+      color: #111827;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(250, 204, 21, 0.3);
+    }
+
+    .subscription-card .btn:hover {
+      background: #fde047;
+      transform: scale(1.07);
+      box-shadow: 0 6px 20px rgba(250, 204, 21, 0.5);
+    }
+
+    @media (max-width: 768px) {
+      #subscriptions {
+        padding: 80px 15px;
+      }
+      .section-title {
+        font-size: 1.8rem;
+      }
+      .subscription-card {
+        padding: 25px 15px;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <h2 class="section-title">الاشتراكات المتاحة</h2>
+    <div class="subscriptions-grid">
+      <!-- Netflix -->
+      <div class="subscription-card fade-in">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/7/75/Netflix_icon.svg"
+          alt="Netflix Logo"
+          class="sub-logo"
+        />
+        <h3>Netflix</h3>
+        <div class="price">260 جنيه</div>
+        <div class="duration">شهري</div>
+        <p>استمتع بمشاهدة آلاف الأفلام والمسلسلات المميزة بجودة عالية.</p>
+        <button class="btn" onclick="openOrderModal(1)">اشترك الآن</button>
+      </div>
+
+      <div class="subscription-card fade-in">
+        <img
+        src="data:image/jpeg;base64,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"
+          alt="WATCH IT Logo"
+          class="sub-logo"
+        />
+        <h3>Watch IT</h3>
+        <div class="price">تحت التحديث</div>
+        <div class="duration">شهري</div>
+        <p>منصة متخصصة في المسلسلات والأفلام العربية والعالمية</p>
+        <button class="btn" onclick="openOrderModal(2)">اشترك الآن</button>
+      </div>
+
+      <div class="subscription-card fade-in">
+        <img
+          src="https://play-lh.googleusercontent.com/9q9uNUq1Xxr9D7jLPXMWWgnPUzYPzRLHaTXqjgRnB48eZax_zrucdCAJNlPEKhvqd6U=w240-h480-rw"
+          alt="Shahid Logo"
+          class="sub-logo"
+        />
+        <h3>Shahid</h3>
+        <div class="price">تحت التحديث</div>
+        <div class="duration">شهري</div>
+        <p>أكبر مكتبة للمحتوى العربي من أفلام ومسلسلات وبرامج</p>
+        <button class="btn" onclick="openOrderModal(3)">اشترك الآن</button>
+      </div>
+
+      <div class="subscription-card fade-in">
+        <img
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmDQeEVLpC3qKTnD9e3hGv1ifc0ofUzmJIrQ&s"
+          alt="Yango Play Logo"
+          class="sub-logo"
+        />
+        <h3>Yango Play</h3>
+        <div class="price">تحت التحديث</div>
+        <div class="duration">شهري</div>
+        <p>منصة ترفيهية شاملة بالمحتوى العربي والعالمي</p>
+        <button class="btn" onclick="openOrderModal(4)">اشترك الآن</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="hero" id="about">
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap");
+
+    #about {
+      background: linear-gradient(135deg, #1f2937, #0f172a);
+      padding: 80px 20px;
+      color: #f9fafb;
+      text-align: center;
+      font-family: "Cairo", sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #about::before {
+      content: "";
+      position: absolute;
+      top: -50px;
+      left: -50px;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      filter: blur(70px);
+      animation: float 8s ease-in-out infinite alternate;
+    }
+
+    #about::after {
+      content: "";
+      position: absolute;
+      bottom: -60px;
+      right: -60px;
+      width: 250px;
+      height: 250px;
+      background: rgba(255, 0, 90, 0.1);
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: float 10s ease-in-out infinite alternate-reverse;
+    }
+
+    @keyframes float {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(30px);
+      }
+    }
+
+    #about .container {
+      max-width: 850px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 50px 40px;
+      border-radius: 25px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      transform: translateY(40px);
+      opacity: 0;
+      animation: fadeUp 1.2s ease-out forwards;
+    }
+
+    @keyframes fadeUp {
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    #about h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 25px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #about h1::before {
+      content: "💫";
+      font-size: 1.8rem;
+    }
+
+    #about p {
+      font-size: 1.05rem;
+      margin-bottom: 18px;
+      color: #e5e7eb;
+      line-height: 1.9;
+    }
+
+    #about strong {
+      color: #ffb703;
+    }
+
+    #about .time-note {
+      margin-top: 25px;
+      font-weight: 600;
+      color: #facc15;
+      font-size: 1.1rem;
+    }
+
+    @media (max-width: 600px) {
+      #about .container {
+        padding: 30px 20px;
+      }
+
+      #about h1 {
+        font-size: 1.7rem;
+      }
+
+      #about p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <h1>من نحن؟</h1>
+
+    <p>
+      أنا صاحب موقع <strong>اشتراكاتي</strong>، وأسعى لتقديم خدمات اشتراكات رقمية أصلية وموثوقة
+      لأشهر المنصات الترفيهية مثل
+      <strong>Netflix</strong>، <strong>Shahid</strong>، <strong>Watch It</strong>، و<strong>Yango Play</strong>
+      بأسعار تنافسية تناسب الجميع.
+    </p>
+
+    <p>
+      بدأت فكرة الموقع من إيماني بأن الترفيه يجب أن يكون في متناول الجميع،
+      لذلك أنشأت هذه المنصة لتسهيل الحصول على الاشتراكات الأصلية بطريقة
+      <strong>بسيطة وآمنة</strong>، دون تعقيدات الدفع أو التعامل مع جهات غير موثوقة.
+    </p>
+
+    <p>
+      هدفي هو بناء ثقة حقيقية بيني وبين العملاء من خلال
+      <strong>الشفافية، السرعة، والدعم المستمر</strong>،
+      وتوفير تجربة مميزة وسهلة لكل مستخدم في الوطن العربي.
+    </p>
+
+    <p>
+      أعمل بشكل فردي، لكن بشغف ومسؤولية، لأضمن لكل عميل تجربة موثوقة وسريعة،
+      وأسعى لأن يكون موقع <strong>اشتراكاتي</strong> هو
+      <strong>الخيار الأول لكل من يبحث عن اشتراك رقمي مضمون وسهل.</strong>
+    </p>
+
+    <p class="time-note">
+      ⏱️ يتم تفعيل الاشتراك خلال فترة تتراوح بين <strong>5 دقائق و15 دقيقة كحد أقصى</strong> بعد تأكيد التحويل.
+    </p>
+  </div>
+</section>
+
+<!-- 🔹 قسم سياسة الخصوصية -->
+<section class="hero" id="Privacy_Policy">
+  <style>
+    #Privacy_Policy {
+      background: linear-gradient(135deg, #312e81, #1e1b4b);
+      padding: 80px 20px;
+      color: #f9fafb;
+      text-align: center;
+      font-family: "Cairo", sans-serif;
+      overflow: hidden;
+    }
+
+    #Privacy_Policy .container {
+      max-width: 900px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 50px 35px;
+      border-radius: 25px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      transform: translateY(40px);
+      opacity: 0;
+      animation: fadeUp 1.2s ease-out forwards;
+    }
+
+    #Privacy_Policy h1 {
+      font-size: 2rem;
+      color: #facc15;
+      margin-bottom: 20px;
+    }
+
+    #Privacy_Policy p {
+      font-size: 1.05rem;
+      color: #e0e7ff;
+      line-height: 1.9;
+      text-align: justify;
+    }
+  </style>
+
+  <div class="container">
+    <h1>سياسة الخصوصية</h1>
+    <p>
+      نحن نحترم خصوصية زوارنا والمستخدمين. يتم جمع البيانات فقط لتنفيذ طلب
+      الاشتراك والتواصل معك بشأنه، مثل الاسم والبريد الإلكتروني ورقم الهاتف.
+      <br /><br />
+      لا نشارك بياناتك مع أي جهة خارجية تحت أي ظرف.
+      <br /><br />
+      باستخدامك للموقع، فإنك توافق على جمع واستخدام بياناتك وفقًا لهذه
+      السياسة. يمكنك التواصل معنا في أي وقت لحذف أو تعديل بياناتك عبر صفحة
+      <strong>اتصل بنا</strong>.
+    </p>
+  </div>
+</section>
+
+<!-- 🔹 قسم الشروط والأحكام -->
+<section class="hero" id="Terms&Conditions">
+  <style>
+    #Terms\&Conditions {
+      background: linear-gradient(135deg, #4c0519, #1a0b0d);
+      padding: 80px 20px;
+      color: #f9fafb;
+      text-align: center;
+      font-family: "Cairo", sans-serif;
+      overflow: hidden;
+    }
+
+    #Terms\&Conditions .container {
+      max-width: 900px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 50px 35px;
+      border-radius: 25px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      transform: translateY(40px);
+      opacity: 0;
+      animation: fadeUp 1.2s ease-out forwards;
+    }
+
+    #Terms\&Conditions h1 {
+      font-size: 2rem;
+      color: #f87171;
+      margin-bottom: 20px;
+    }
+
+    #Terms\&Conditions p {
+      font-size: 1.05rem;
+      color: #fee2e2;
+      line-height: 1.9;
+      text-align: justify;
+    }
+  </style>
+
+  <div class="container">
+    <h1>الشروط والأحكام</h1>
+    <p>
+      باستخدام هذا الموقع، فإنك توافق على الالتزام بجميع الشروط التالية:
+      <br /><br />
+      • يتم تنفيذ الطلبات بعد تأكيد الدفع والتحقق من التحويل. <br />
+      • الموقع غير مسؤول عن أي توقف أو مشكلة في الخدمة من جهة المنصات الأصلية
+      (مثل نتفليكس أو شاهد). <br />
+      • جميع الاشتراكات تُدار بأمان وبالأسعار الموضحة في الموقع. <br />
+      • لا يجوز إساءة استخدام الموقع أو محاولة اختراقه. <br /><br />
+      يحتفظ الموقع بالحق في تعديل هذه الشروط في أي وقت.
+    </p>
+  </div>
+</section>
+
+<!-- 🔹 قسم اتصل بنا -->
+<section class="hero" id="contact">
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap");
+
+    #contact {
+      background: linear-gradient(135deg, #0d9488, #064e3b);
+      padding: 80px 20px;
+      color: #f9fafb;
+      text-align: center;
+      font-family: "Cairo", sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #contact .container {
+      max-width: 800px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 45px 35px;
+      border-radius: 25px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 35px rgba(0, 0, 0, 0.4);
+      transform: translateY(40px);
+      opacity: 0;
+      animation: fadeUp 1.2s ease-out forwards;
+    }
+
+    #contact h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    #contact p {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #f0fdf4;
+    }
+
+    #contact a {
+      color: #facc15;
+      font-weight: 600;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    #contact a:hover {
+      color: #fff176;
+    }
+
+    @keyframes fadeUp {
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <h1>اتصل بنا</h1>
+    <p>يسعدنا تواصلك معنا في أي وقت للاستفسارات أو الدعم الفني.</p>
+    <p>
+      واتساب:
+      <a href="https://wa.me/201274445091" target="_blank">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+          alt="WhatsApp"
+          width="22"
+          style="vertical-align: middle; margin-left: 5px"
+        />
+        John Latif
+
+      </a>
+      <br /><br />
+      🕒 ساعات العمل: يوميًا من <strong>10 صباحًا إلى 10 مساءً</strong> بتوقيت القاهرة
+    </p>
+  </div>
+</section>
 
     <!-- Modal لطلب الاشتراك -->
     <div id="orderModal" class="modal">
@@ -722,11 +1405,111 @@
         </div>
     </div>
 
-    <footer>
-        <div class="container">
-            <p>جميع الحقوق محفوظة &copy; 2025 موقع اشتراكاتي</p>
-        </div>
-    </footer>
+<footer id="footer">
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap");
+
+    #footer {
+      background: linear-gradient(135deg, #111827, #0f172a);
+      color: #f9fafb;
+      text-align: center;
+      padding: 50px 20px 30px;
+      font-family: "Cairo", sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #footer::before {
+      content: "";
+      position: absolute;
+      top: -40px;
+      left: -40px;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
+      filter: blur(60px);
+      animation: float 9s ease-in-out infinite alternate;
+    }
+
+    @keyframes float {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(30px);
+      }
+    }
+
+    #footer .footer-links {
+      margin-bottom: 20px;
+    }
+
+    #footer .footer-links a {
+      color: #facc15;
+      margin: 0 10px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    #footer .footer-links a:hover {
+      color: #fff;
+      text-decoration: underline;
+    }
+
+    #footer .social-icons a {
+      display: inline-block;
+      margin: 0 6px;
+      opacity: 0.85;
+      transition: 0.3s;
+    }
+
+    #footer .social-icons a:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    #footer .social-icons img {
+      width: 26px;
+      height: 26px;
+      vertical-align: middle;
+      border-radius: 50%;
+    }
+
+    #footer p {
+      margin-top: 20px;
+      font-size: 0.95rem;
+      color: #d1d5db;
+    }
+  </style>
+
+  <div class="container">
+    <div class="footer-links">
+      <a href="#about">من نحن</a> |
+      <a href="#Privacy_Policy">سياسة الخصوصية</a> |
+      <a href="#Terms&Conditions">الشروط والأحكام</a> |
+      <a href="#contact">اتصل بنا</a>
+    </div>
+
+    <div class="social-icons">
+      <a href="https://wa.me/201274445091" target="_blank"><img
+          src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+          alt="WhatsApp"/></a>
+
+      <a href="#" target="_blank"
+        ><img
+          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAk1BMVEUIZv////8AZP8AXv8AW//K2f8wdP+mvP/m7v/w9/+1zf8AYv8AYP8AXf8AWv8mcP9pl/9Egv/s8//g6v8zef+Nrv/5+/8AaP++0P9Tjf8NbP8qdv89ff9TiP9djP9lkv+hv//T4P9EhP+Yt/9unP+Dqv+Nsf+kwv95pP+GrP8AVv+rx/9ymv+Zuv+6z/8AUv/Y5v9u+RSQAAADvUlEQVR4nO3bbVPiMBSG4W4TViChSoHyIsi7gojL//91W9Dd0Znu0rRJzgnz3J/0g0yvqTZtc4wihBBCCCGEEEIIIYQQQgghhBBCCCGEEKPiKFZ5+lL+Rf499SFZK1ZCyERPHqezp/nDpadZtz+JZCKF0Ir6+Oqlctv9eL8Y9dJWlv34UtZKm8v2YvC2Gr7m0hCd51OnxovGN1dh2ak9mA2Fpj5is1RHddfLq7gv9QYhEbXsHnsmvHPvkvqwSyeSjdHZ+6wdiDAWeptW8AUjVHpTzReIMJarU0VfGEIlj5V9QQhF3/j6GZYwmV9f3IMWJoNaPv5Cua4J5C5MagOZC5Pn2kDeQjGvD2QtVNN6V9EAhLXWwQCEyYsNIGOhnlkB8hXGwsrvKGOhqHsvw14YVX0eDEVo7RSyFerWjQvF1haQqzCxdCFlK1Rja0CmQtm+deHQ1lLBVahtPDWxFnYs/pLyFMZNi0KOOzOqX82SnUbH3cN41b00G4/nm93guGW4uyb2FXSN7WMipbhs5v9Na8Fyh1SOTH29XZTogEYUXg3vSdOdENTHbNbQDPiuRECn75zhLdv+lfqAjRNGr4H3DBeDa3UOBsBDeGcwf3Iy2O9tdqiPtkrS4FI657jaXW1S/l1+I8hTqKblT+FDkKdQPZUGpgFeR/P0W2nhIVDhrrRwHOJwpdGCH9rd2mei9HhQL8TVPq9TettwFOafocGbxLvAnpn+JN/LCndBroYmT/iBXkoj2SgrXN28sB/mYmEg/HnzwnsImQYhhPyDEEL+QQgh/25JKAr7VVo4lMWf8DXSh2S1vius9CDGovjnvzWgfIYUNv7X4FqkOxvC2gjpf1pTvq3yIiTdu/EifKS83voQpkNCoBfhknQL1YfwcPNC2tfiPoQz0pfGHoQt2ltXD8JmQgn0ISSeD/YgJL1n8yIknrfxIJzQPiO7F2bEowzuhUvaS6kHIe09mw/hhniUwb1wSrzR71yY0fo8CE/U8zbOhSPqCWLnwmfqqTDnwjn1RJFrYUb6ns2HsEnscy9cko+fuhYuqC+lzoX046euhfTDmY6F5PdszoUMJvn1qVlY6Y3T4h//LH2hvqOJojhWRSXlJ2h14Qd8FFMv9+fiwgyEqvgTPqLW/TtMQUPIPwgh5B+EEPIPQgj5ByGE/IMQQv5BCCH/IISQfxBCyD8IIeQfhBDyD0II+QchhPyDEEL+QQgh/yCEkH8QQsg/CCHkH4QQ8g9CCPkHIYT8gxBC/kEIIf8ghJB/EELIP1bC3+saVIhwa+gQAAAAAElFTkSuQmCC"
+          alt="facebook"/></a>
+
+    <a href="#" target="_blank"><img
+          src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png"alt="Instagram"/></a>
+    </div>
+
+    <p>جميع الحقوق محفوظة &copy; 2025 موقع اشتراكاتي</p>
+  </div>
+</footer>
+
 
     <script>
         const orderModal = document.getElementById('orderModal');
