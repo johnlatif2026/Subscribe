@@ -377,6 +377,74 @@
             font-size: 0.85rem;
         }
         
+        /* نافذة عرض الصورة */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .image-modal.active {
+            display: flex;
+            opacity: 1;
+            animation: fadeIn 0.3s forwards;
+        }
+        
+        .image-modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        
+        .image-modal.active .image-modal-content {
+            transform: scale(1);
+        }
+        
+        .image-modal-close {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.5);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .image-modal-close:hover {
+            background: rgba(0, 0, 0, 0.7);
+            transform: scale(1.1);
+        }
+        
+        .screenshot-link {
+            color: #764ba2;
+            text-decoration: underline;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .screenshot-link:hover {
+            color: #5a3780;
+        }
+        
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -419,6 +487,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <!-- نافذة عرض الصورة -->
+    <div id="imageModal" class="image-modal">
+        <span class="image-modal-close" id="closeImageModal">&times;</span>
+        <img id="modalImage" class="image-modal-content" src="" alt="سكرين التحويل">
+    </div>
+
     <header class="header" id="mainHeader">
         <div class="nav-container">
             <div class="logo">
@@ -471,6 +545,7 @@
                             <th>البريد الإلكتروني</th>
                             <th>رقم الهاتف</th>
                             <th>رقم التحويل</th>
+                            <th>سكرين التحويل</th>
                             <th>السعر</th>
                             <th>الحالة</th>
                             <th>التاريخ</th>
@@ -479,7 +554,7 @@
                     </thead>
                     <tbody id="ordersTableBody">
                         <tr>
-                            <td colspan="10" class="loading">
+                            <td colspan="11" class="loading">
                                 <i class="fas fa-spinner"></i>
                                 جاري تحميل الطلبات...
                             </td>
@@ -499,6 +574,9 @@
             const logoutBtn = document.getElementById('logoutBtn');
             const messageEl = document.getElementById('message');
             const header = document.getElementById('mainHeader');
+            const imageModal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            const closeImageModal = document.getElementById('closeImageModal');
             
             // تأثير التمرير للهيدر
             window.addEventListener('scroll', function() {
@@ -537,14 +615,14 @@
                     updateStats(orders);
                 } catch (error) {
                     console.error('Error loading orders:', error);
-                    ordersTableBody.innerHTML = '<tr><td colspan="10" class="loading"><i class="fas fa-exclamation-triangle"></i> حدث خطأ أثناء تحميل الطلبات</td></tr>';
+                    ordersTableBody.innerHTML = '<tr><td colspan="11" class="loading"><i class="fas fa-exclamation-triangle"></i> حدث خطأ أثناء تحميل الطلبات</td></tr>';
                 }
             }
             
             // عرض الطلبات
             function displayOrders(orders) {
                 if (orders.length === 0) {
-                    ordersTableBody.innerHTML = '<tr><td colspan="10" class="loading"><i class="fas fa-inbox"></i> لا توجد طلبات</td></tr>';
+                    ordersTableBody.innerHTML = '<tr><td colspan="11" class="loading"><i class="fas fa-inbox"></i> لا توجد طلبات</td></tr>';
                     return;
                 }
                 
@@ -555,6 +633,9 @@
                     const date = order.createdAt ? new Date(order.createdAt).toLocaleString('ar-EG') : 'غير محدد';
                     const statusClass = `status-${order.status || 'pending'}`;
                     const statusText = getStatusText(order.status);
+                    const screenshotLink = order.transferScreenshot ? 
+                        `<span class="screenshot-link" onclick="showImage('${order.transferScreenshot}')">عرض السكرين</span>` : 
+                        'لا يوجد';
                     
                     row.innerHTML = `
                         <td>${order.id.substring(0, 8)}...</td>
@@ -563,6 +644,7 @@
                         <td>${order.email}</td>
                         <td>${order.phone}</td>
                         <td>${order.transferNumber}</td>
+                        <td>${screenshotLink}</td>
                         <td>${order.subscriptionPrice} جنيه</td>
                         <td><span class="${statusClass}">${statusText}</span></td>
                         <td>${date}</td>
@@ -596,6 +678,24 @@
                 };
                 return statusMap[status] || 'قيد الانتظار';
             }
+            
+            // عرض الصورة في نافذة منبثقة
+            window.showImage = function(imageUrl) {
+                modalImage.src = imageUrl;
+                imageModal.classList.add('active');
+            };
+            
+            // إغلاق نافذة الصورة
+            closeImageModal.addEventListener('click', function() {
+                imageModal.classList.remove('active');
+            });
+            
+            // إغلاق نافذة الصورة عند النقر خارجها
+            imageModal.addEventListener('click', function(event) {
+                if (event.target === imageModal) {
+                    imageModal.classList.remove('active');
+                }
+            });
             
             // تحديث حالة الطلب
             window.updateOrderStatus = async function(orderId, status) {

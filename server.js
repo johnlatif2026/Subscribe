@@ -5,24 +5,74 @@ const csrf = require('csurf');
 const path = require('path');
 const admin = require('firebase-admin');
 const TelegramBot = require('node-telegram-bot-api');
+const multer = require('multer');
+const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// Middleware أساسية
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static('public'));
+app.use('/uploads', express.static('uploads'));
 
-// CSRF Protection للادمن فقط
-const csrfProtection = csrf({ 
+// إنشاء مجلد التحميلات إذا لم يكن موجوداً
+if (!fs.existsSync('uploads')) {
+    fs.mkdirSync('uploads');
+}
+
+// 🔐 إعداد CSRF
+const csrfProtection = csrf({
   cookie: {
+    key: '_csrf',        // لتخزين الـ secret الداخلي
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict'
+    secure: false,       // اجعلها true في production مع HTTPS
+    sameSite: 'lax'
   }
+});
+
+// 🔹 إعداد multer لرفع الملفات
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/')
+  },
+  filename: function (req, file, cb) {
+    // إنشاء اسم فريد للملف
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'screenshot-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  // قبول الصور فقط
+  if (file.mimetype.startsWith('image/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('يجب رفع صورة فقط!'), false);
+  }
+};
+
+const upload = multer({ 
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB حد أقصى
+  }
+});
+
+// 🔹 مسار لجلب الـ CSRF Token
+app.get('/api/csrf-token', csrfProtection, (req, res) => {
+  const token = req.csrfToken();
+  // إرسال التوكن في الكوكي حتى يقدر الـ frontend يقرأه
+  res.cookie('XSRF-TOKEN', token, {
+    httpOnly: false,
+    secure: false,
+    sameSite: 'lax'
+  });
+  res.json({ csrfToken: token });
 });
 
 // Firebase Admin initialization
@@ -90,39 +140,44 @@ app.get('/dashboard.html', authenticateToken, csrfProtection, (req, res) => {
 
 // API Routes
 
-// تسجيل الدخول للادمن
+// ✅ تسجيل الدخول مع حماية CSRF
 app.post('/api/admin/login', csrfProtection, (req, res) => {
   const { username, password } = req.body;
-  
+
   if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
-    const token = jwt.sign(
-      { username: username }, 
-      process.env.JWT_SECRET, 
-      { expiresIn: process.env.JWT_EXPIRES_IN }
-    );
-    
+    const token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: '2h' });
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict'
+      sameSite: 'lax',
+      secure: false
     });
-    
     return res.json({ success: true, message: 'تم تسجيل الدخول بنجاح' });
   }
-  
+
   res.status(401).json({ success: false, message: 'اسم المستخدم أو كلمة المرور غير صحيحة' });
 });
 
-// طلب اشتراك من العميل (بدون تسجيل دخول)
-app.post('/api/subscription-order', async (req, res) => {
+// طلب اشتراك من العميل (بدون تسجيل دخول) مع رفع الملف
+app.post('/api/subscription-order', upload.single('transferScreenshot'), async (req, res) => {
   try {
-    const { subscriptionId, accountName, email, phone, transferNumber, transferScreenshot } = req.body;
+    const { subscriptionId, accountName, email, phone, transferNumber } = req.body;
     
     const subscription = subscriptions.find(sub => sub.id === parseInt(subscriptionId));
     
     if (!subscription) {
+      // حذف الملف إذا كان تم رفعه
+      if (req.file) {
+        fs.unlinkSync(req.file.path);
+      }
       return res.status(400).json({ success: false, message: 'الاشتراك غير موجود' });
     }
+
+    // التحقق من وجود الملف
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'يجب رفع صورة التحويل' });
+    }
+    
+    const screenshotPath = '/uploads/' + req.file.filename;
     
     // حفظ الطلب في Firestore
     let orderId = null;
@@ -136,7 +191,7 @@ app.post('/api/subscription-order', async (req, res) => {
         email,
         phone,
         transferNumber,
-        transferScreenshot,
+        transferScreenshot: screenshotPath,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         status: 'pending',
         type: 'customer_order'
@@ -155,6 +210,7 @@ app.post('/api/subscription-order', async (req, res) => {
 📧 البريد الإلكتروني: ${email}
 📞 رقم الهاتف: ${phone}
 🔢 رقم التحويل: ${transferNumber}
+🖼️ صورة التحويل: ${req.protocol}://${req.get('host')}${screenshotPath}
 🆔 رقم الطلب: ${orderId || 'N/A'}
 ⏰ الوقت: ${new Date().toLocaleString('ar-EG')}
       `;
@@ -174,6 +230,10 @@ app.post('/api/subscription-order', async (req, res) => {
     
   } catch (error) {
     console.error('Order processing error:', error);
+    // حذف الملف إذا كان تم رفعه
+    if (req.file) {
+      fs.unlinkSync(req.file.path);
+    }
     res.status(500).json({ success: false, message: 'حدث خطأ أثناء معالجة الطلب' });
   }
 });
@@ -208,6 +268,19 @@ app.get('/api/orders', authenticateToken, async (req, res) => {
   }
 });
 
+// جلب صورة التحويل
+app.get('/api/screenshot/:filename', authenticateToken, (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, 'uploads', filename);
+  
+  // التحقق من أن الملف موجود وآمن
+  if (fs.existsSync(filePath) && filename.startsWith('screenshot-')) {
+    res.sendFile(filePath);
+  } else {
+    res.status(404).json({ error: 'الصورة غير موجودة' });
+  }
+});
+
 // تحديث حالة الطلب
 app.put('/api/orders/:id', authenticateToken, csrfProtection, async (req, res) => {
   try {
@@ -231,6 +304,7 @@ app.put('/api/orders/:id', authenticateToken, csrfProtection, async (req, res) =
   }
 });
 
+// 🔹 تسجيل الخروج
 app.post('/api/admin/logout', (req, res) => {
   res.clearCookie('token');
   res.json({ success: true, message: 'تم تسجيل الخروج بنجاح' });
