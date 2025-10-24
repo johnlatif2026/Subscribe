@@ -1278,6 +1278,360 @@
   </div>
 </section>
 
+<!-- 🔹 قسم الاقتراحات -->
+<section class="hero" id="suggestions">
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap");
+
+    #suggestions {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      padding: 80px 20px;
+      color: #f9fafb;
+      text-align: center;
+      font-family: "Cairo", sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #suggestions::before {
+      content: "";
+      position: absolute;
+      top: -50px;
+      left: -50px;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      filter: blur(70px);
+      animation: float 8s ease-in-out infinite alternate;
+    }
+
+    #suggestions .container {
+      max-width: 800px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 50px 40px;
+      border-radius: 25px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      transform: translateY(40px);
+      opacity: 0;
+      animation: fadeUp 1.2s ease-out forwards;
+    }
+
+    #suggestions h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #facc15;
+      margin-bottom: 25px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #suggestions h1::before {
+      content: "💡";
+      font-size: 1.8rem;
+    }
+
+    #suggestions p {
+      font-size: 1.05rem;
+      margin-bottom: 25px;
+      color: #e5e7eb;
+      line-height: 1.9;
+    }
+
+    .suggestion-form {
+      text-align: right;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #facc15;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1px solid #374151;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s;
+      background: rgba(255, 255, 255, 0.1);
+      color: #f9fafb;
+      font-family: "Cairo", sans-serif;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: #facc15;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.1);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .btn {
+      display: inline-block;
+      background: #facc15;
+      color: #111827;
+      padding: 12px 28px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 15px rgba(250, 204, 21, 0.4);
+    }
+
+    .btn:hover {
+      background: #fde047;
+      transform: scale(1.07);
+      box-shadow: 0 6px 20px rgba(250, 204, 21, 0.5);
+    }
+
+    .message {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+      display: none;
+      animation: fadeIn 0.5s forwards;
+    }
+
+    .success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    @keyframes fadeUp {
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes float {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(30px);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 600px) {
+      #suggestions .container {
+        padding: 30px 20px;
+      }
+
+      #suggestions h1 {
+        font-size: 1.7rem;
+      }
+
+      #suggestions p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <h1>اقتراحاتكم تهمنا</h1>
+    <p>
+      نرحب باقتراحاتكم وآرائكم لتطوير خدماتنا وتحسين تجربتكم مع موقع اشتراكاتي.
+      شاركنا أفكارك وملاحظاتك وسنعمل على دراستها وتطبيق ما يمكن تطبيقه.
+    </p>
+
+    <form id="suggestionForm" class="suggestion-form">
+      <div class="form-group">
+        <label for="suggestionName">الاسم (اختياري)</label>
+        <input type="text" id="suggestionName" name="name" placeholder="ادخل اسمك">
+      </div>
+
+      <div class="form-group">
+        <label for="suggestionEmail">البريد الإلكتروني (اختياري)</label>
+        <input type="email" id="suggestionEmail" name="email" placeholder="ادخل بريدك الإلكتروني">
+      </div>
+
+      <div class="form-group">
+        <label for="suggestionMessage">الاقتراح أو الملاحظة *</label>
+        <textarea id="suggestionMessage" name="message" placeholder="اكتب اقتراحك أو ملاحظتك هنا..." required></textarea>
+      </div>
+
+      <button type="submit" class="btn">إرسال الاقتراح</button>
+    </form>
+
+    <div id="suggestionMessage" class="message"></div>
+  </div>
+</section>
+
+<!-- 🔹 قسم الاستفسارات -->
+<section class="hero" id="inquiries">
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap");
+
+    #inquiries {
+      background: linear-gradient(135deg, #1f2937, #0f172a);
+      padding: 80px 20px;
+      color: #f9fafb;
+      text-align: center;
+      font-family: "Cairo", sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #inquiries::before {
+      content: "";
+      position: absolute;
+      bottom: -60px;
+      right: -60px;
+      width: 250px;
+      height: 250px;
+      background: rgba(255, 0, 90, 0.1);
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: float 10s ease-in-out infinite alternate-reverse;
+    }
+
+    #inquiries .container {
+      max-width: 800px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 50px 40px;
+      border-radius: 25px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      transform: translateY(40px);
+      opacity: 0;
+      animation: fadeUp 1.2s ease-out forwards;
+    }
+
+    #inquiries h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #60a5fa;
+      margin-bottom: 25px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #inquiries h1::before {
+      content: "❓";
+      font-size: 1.8rem;
+    }
+
+    #inquiries p {
+      font-size: 1.05rem;
+      margin-bottom: 25px;
+      color: #e5e7eb;
+      line-height: 1.9;
+    }
+
+    .inquiry-form {
+      text-align: right;
+    }
+
+    @keyframes fadeUp {
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes float {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(30px);
+      }
+    }
+
+    @media (max-width: 600px) {
+      #inquiries .container {
+        padding: 30px 20px;
+      }
+
+      #inquiries h1 {
+        font-size: 1.7rem;
+      }
+
+      #inquiries p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <h1>استفساراتكم</h1>
+    <p>
+      لديك استفسار عن خدمة معينة أو تحتاج إلى مساعدة؟ 
+      لا تتردد في التواصل معنا عبر هذا النموذج، وسنرد عليك في أقرب وقت ممكن.
+    </p>
+
+    <form id="inquiryForm" class="inquiry-form">
+      <div class="form-group">
+        <label for="inquiryName">الاسم *</label>
+        <input type="text" id="inquiryName" name="name" placeholder="ادخل اسمك" required>
+      </div>
+
+      <div class="form-group">
+        <label for="inquiryEmail">البريد الإلكتروني *</label>
+        <input type="email" id="inquiryEmail" name="email" placeholder="ادخل بريدك الإلكتروني" required>
+      </div>
+
+      <div class="form-group">
+        <label for="inquiryPhone">رقم الهاتف (اختياري)</label>
+        <input type="tel" id="inquiryPhone" name="phone" placeholder="ادخل رقم هاتفك">
+      </div>
+
+      <div class="form-group">
+        <label for="inquirySubject">موضوع الاستفسار *</label>
+        <input type="text" id="inquirySubject" name="subject" placeholder="اكتب موضوع استفسارك" required>
+      </div>
+
+      <div class="form-group">
+        <label for="inquiryMessage">تفاصيل الاستفسار *</label>
+        <textarea id="inquiryMessage" name="message" placeholder="اكتب تفاصيل استفسارك هنا..." required></textarea>
+      </div>
+
+      <button type="submit" class="btn">إرسال الاستفسار</button>
+    </form>
+
+    <div id="inquiryMessage" class="message"></div>
+  </div>
+</section>
+
 <!-- 🔹 قسم اتصل بنا -->
 <section class="hero" id="contact">
   <style>
@@ -1623,6 +1977,85 @@
                 orderMessage.style.display = 'block';
             }
         });
+        // معالجة نموذج الاقتراحات
+const suggestionForm = document.getElementById('suggestionForm');
+const suggestionMessage = document.getElementById('suggestionMessage');
+
+suggestionForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    try {
+        const response = await fetch('/api/suggestion', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            suggestionMessage.textContent = result.message;
+            suggestionMessage.className = 'message success';
+            suggestionMessage.style.display = 'block';
+            
+            suggestionForm.reset();
+            
+            setTimeout(() => {
+                suggestionMessage.style.display = 'none';
+            }, 5000);
+        } else {
+            suggestionMessage.textContent = result.message;
+            suggestionMessage.className = 'message error';
+            suggestionMessage.style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Suggestion error:', error);
+        suggestionMessage.textContent = 'حدث خطأ أثناء إرسال الاقتراح';
+        suggestionMessage.className = 'message error';
+        suggestionMessage.style.display = 'block';
+    }
+});
+
+// معالجة نموذج الاستفسارات
+const inquiryForm = document.getElementById('inquiryForm');
+const inquiryMessage = document.getElementById('inquiryMessage');
+
+inquiryForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    try {
+        const response = await fetch('/api/inquiry', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            inquiryMessage.textContent = result.message;
+            inquiryMessage.className = 'message success';
+            inquiryMessage.style.display = 'block';
+            
+            inquiryForm.reset();
+            
+            setTimeout(() => {
+                inquiryMessage.style.display = 'none';
+            }, 5000);
+        } else {
+            inquiryMessage.textContent = result.message;
+            inquiryMessage.className = 'message error';
+            inquiryMessage.style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Inquiry error:', error);
+        inquiryMessage.textContent = 'حدث خطأ أثناء إرسال الاستفسار';
+        inquiryMessage.className = 'message error';
+        inquiryMessage.style.display = 'block';
+    }
+});
     </script>
 </body>
 </html>
