@@ -304,6 +304,202 @@ app.put('/api/orders/:id', authenticateToken, csrfProtection, async (req, res) =
   }
 });
 
+// إرسال اقتراح من العميل
+app.post('/api/suggestion', async (req, res) => {
+  try {
+    const { name, email, message } = req.body;
+    
+    if (!message) {
+      return res.status(400).json({ success: false, message: 'يرجى كتابة الاقتراح أو الملاحظة' });
+    }
+    
+    // حفظ الاقتراح في Firestore
+    let suggestionId = null;
+    if (firebaseInitialized) {
+      const db = admin.firestore();
+      const suggestionRef = await db.collection('suggestions').add({
+        name: name || 'غير مذكور',
+        email: email || 'غير مذكور',
+        message,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        type: 'suggestion'
+      });
+      suggestionId = suggestionRef.id;
+    }
+    
+    // إرسال إشعار على التيليجرام
+    if (telegramBot) {
+      const telegramMessage = `
+💡 اقتراح جديد من العميل
+━━━━━━━━━━━━━━━━━━━━
+👤 الاسم: ${name || 'غير مذكور'}
+📧 البريد الإلكتروني: ${email || 'غير مذكور'}
+💬 الاقتراح:
+${message}
+🆔 رقم الاقتراح: ${suggestionId || 'N/A'}
+⏰ الوقت: ${new Date().toLocaleString('ar-EG')}
+      `;
+      
+      try {
+        await telegramBot.sendMessage(process.env.TELEGRAM_CHAT_ID, telegramMessage);
+      } catch (error) {
+        console.error('Telegram send suggestion error:', error);
+      }
+    }
+    
+    res.json({ 
+      success: true, 
+      message: 'شكراً لك! تم استلام اقتراحك بنجاح وسيتم دراسته',
+      suggestionId: suggestionId
+    });
+    
+  } catch (error) {
+    console.error('Suggestion processing error:', error);
+    res.status(500).json({ success: false, message: 'حدث خطأ أثناء معالجة الاقتراح' });
+  }
+});
+
+// إرسال استفسار من العميل
+app.post('/api/inquiry', async (req, res) => {
+  try {
+    const { name, email, phone, subject, message } = req.body;
+    
+    if (!name || !email || !subject || !message) {
+      return res.status(400).json({ success: false, message: 'يرجى ملء جميع الحقول المطلوبة' });
+    }
+    
+    // حفظ الاستفسار في Firestore
+    let inquiryId = null;
+    if (firebaseInitialized) {
+      const db = admin.firestore();
+      const inquiryRef = await db.collection('inquiries').add({
+        name,
+        email,
+        phone: phone || 'غير مذكور',
+        subject,
+        message,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        type: 'inquiry',
+        status: 'new'
+      });
+      inquiryId = inquiryRef.id;
+    }
+    
+    // إرسال إشعار على التيليجرام
+    if (telegramBot) {
+      const telegramMessage = `
+❓ استفسار جديد من العميل
+━━━━━━━━━━━━━━━━━━━━
+👤 الاسم: ${name}
+📧 البريد الإلكتروني: ${email}
+📞 رقم الهاتف: ${phone || 'غير مذكور'}
+📋 الموضوع: ${subject}
+💬 تفاصيل الاستفسار:
+${message}
+🆔 رقم الاستفسار: ${inquiryId || 'N/A'}
+⏰ الوقت: ${new Date().toLocaleString('ar-EG')}
+      `;
+      
+      try {
+        await telegramBot.sendMessage(process.env.TELEGRAM_CHAT_ID, telegramMessage);
+      } catch (error) {
+        console.error('Telegram send inquiry error:', error);
+      }
+    }
+    
+    res.json({ 
+      success: true, 
+      message: 'شكراً لك! تم استلام استفسارك بنجاح وسيتم الرد عليك قريباً',
+      inquiryId: inquiryId
+    });
+    
+  } catch (error) {
+    console.error('Inquiry processing error:', error);
+    res.status(500).json({ success: false, message: 'حدث خطأ أثناء معالجة الاستفسار' });
+  }
+});
+
+// جلب الاقتراحات للادمن
+app.get('/api/suggestions', authenticateToken, async (req, res) => {
+  try {
+    if (!firebaseInitialized) {
+      return res.json([]);
+    }
+    
+    const db = admin.firestore();
+    const suggestionsSnapshot = await db.collection('suggestions')
+      .orderBy('createdAt', 'desc')
+      .get();
+    
+    const suggestions = [];
+    suggestionsSnapshot.forEach(doc => {
+      const data = doc.data();
+      suggestions.push({
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null
+      });
+    });
+    
+    res.json(suggestions);
+  } catch (error) {
+    console.error('Error fetching suggestions:', error);
+    res.status(500).json({ error: 'Failed to fetch suggestions' });
+  }
+});
+
+// جلب الاستفسارات للادمن
+app.get('/api/inquiries', authenticateToken, async (req, res) => {
+  try {
+    if (!firebaseInitialized) {
+      return res.json([]);
+    }
+    
+    const db = admin.firestore();
+    const inquiriesSnapshot = await db.collection('inquiries')
+      .orderBy('createdAt', 'desc')
+      .get();
+    
+    const inquiries = [];
+    inquiriesSnapshot.forEach(doc => {
+      const data = doc.data();
+      inquiries.push({
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null
+      });
+    });
+    
+    res.json(inquiries);
+  } catch (error) {
+    console.error('Error fetching inquiries:', error);
+    res.status(500).json({ error: 'Failed to fetch inquiries' });
+  }
+});
+
+// تحديث حالة الاستفسار
+app.put('/api/inquiries/:id', authenticateToken, csrfProtection, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    
+    if (!firebaseInitialized) {
+      return res.status(500).json({ error: 'Firebase not initialized' });
+    }
+    
+    const db = admin.firestore();
+    await db.collection('inquiries').doc(id).update({
+      status,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+    
+    res.json({ success: true, message: 'تم تحديث حالة الاستفسار' });
+  } catch (error) {
+    console.error('Error updating inquiry:', error);
+    res.status(500).json({ error: 'Failed to update inquiry' });
+  }
+});
+
 // 🔹 تسجيل الخروج
 app.post('/api/admin/logout', (req, res) => {
   res.clearCookie('token');
