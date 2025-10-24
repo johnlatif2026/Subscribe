@@ -565,74 +565,6 @@
             
             <div id="message" class="message"></div>
         </div>
-
-        <!-- قسم الاقتراحات -->
-        <div class="orders-section" style="margin-top: 2rem;">
-            <div class="section-title">
-                <h2>الاقتراحات الواردة</h2>
-                <button id="refreshSuggestionsBtn" class="refresh-btn">
-                    <i class="fas fa-sync-alt"></i>
-                    تحديث
-                </button>
-            </div>
-            
-            <div id="suggestionsTableContainer">
-                <table class="orders-table">
-                    <thead>
-                        <tr>
-                            <th>رقم الاقتراح</th>
-                            <th>الاسم</th>
-                            <th>وسيلة التواصل</th>
-                            <th>الاقتراح</th>
-                            <th>التاريخ</th>
-                            <th>الإجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="suggestionsTableBody">
-                        <tr>
-                            <td colspan="6" class="loading">
-                                <i class="fas fa-spinner"></i>
-                                جاري تحميل الاقتراحات...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- قسم الاستفسارات -->
-        <div class="orders-section" style="margin-top: 2rem;">
-            <div class="section-title">
-                <h2>الاستفسارات الواردة</h2>
-                <button id="refreshInquiriesBtn" class="refresh-btn">
-                    <i class="fas fa-sync-alt"></i>
-                    تحديث
-                </button>
-            </div>
-            
-            <div id="inquiriesTableContainer">
-                <table class="orders-table">
-                    <thead>
-                        <tr>
-                            <th>رقم الاستفسار</th>
-                            <th>الاسم</th>
-                            <th>وسيلة التواصل</th>
-                            <th>الاستفسار</th>
-                            <th>التاريخ</th>
-                            <th>الإجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="inquiriesTableBody">
-                        <tr>
-                            <td colspan="6" class="loading">
-                                <i class="fas fa-spinner"></i>
-                                جاري تحميل الاستفسارات...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
     </div>
 
     <script>
@@ -807,218 +739,12 @@
                 }
             };
             
-            // تحميل الاقتراحات
-            async function loadSuggestions() {
-                try {
-                    const response = await fetch('/api/suggestions', {
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        credentials: 'include'
-                    });
-                    
-                    if (response.status === 401) {
-                        window.location.href = '/login.html';
-                        return;
-                    }
-                    
-                    const suggestions = await response.json();
-                    displaySuggestions(suggestions);
-                } catch (error) {
-                    console.error('Error loading suggestions:', error);
-                    suggestionsTableBody.innerHTML = '<tr><td colspan="6" class="loading"><i class="fas fa-exclamation-triangle"></i> حدث خطأ أثناء تحميل الاقتراحات</td></tr>';
-                }
-            }
-            
-            // عرض الاقتراحات
-            function displaySuggestions(suggestions) {
-                const suggestionsTableBody = document.getElementById('suggestionsTableBody');
-                
-                if (suggestions.length === 0) {
-                    suggestionsTableBody.innerHTML = '<tr><td colspan="6" class="loading"><i class="fas fa-inbox"></i> لا توجد اقتراحات</td></tr>';
-                    return;
-                }
-                
-                suggestionsTableBody.innerHTML = '';
-                
-                suggestions.forEach(suggestion => {
-                    const row = document.createElement('tr');
-                    const date = suggestion.createdAt ? new Date(suggestion.createdAt).toLocaleString('ar-EG') : 'غير محدد';
-                    
-                    row.innerHTML = `
-                        <td>${suggestion.id.substring(0, 8)}...</td>
-                        <td>${suggestion.name}</td>
-                        <td>${suggestion.contact}</td>
-                        <td>${suggestion.message}</td>
-                        <td>${date}</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn btn-danger" onclick="deleteSuggestion('${suggestion.id}')">حذف</button>
-                            </div>
-                        </td>
-                    `;
-                    suggestionsTableBody.appendChild(row);
-                });
-            }
-            
-            // تحميل الاستفسارات
-            async function loadInquiries() {
-                try {
-                    const response = await fetch('/api/inquiries', {
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        credentials: 'include'
-                    });
-                    
-                    if (response.status === 401) {
-                        window.location.href = '/login.html';
-                        return;
-                    }
-                    
-                    const inquiries = await response.json();
-                    displayInquiries(inquiries);
-                } catch (error) {
-                    console.error('Error loading inquiries:', error);
-                    inquiriesTableBody.innerHTML = '<tr><td colspan="6" class="loading"><i class="fas fa-exclamation-triangle"></i> حدث خطأ أثناء تحميل الاستفسارات</td></tr>';
-                }
-            }
-            
-            // عرض الاستفسارات
-            function displayInquiries(inquiries) {
-                const inquiriesTableBody = document.getElementById('inquiriesTableBody');
-                
-                if (inquiries.length === 0) {
-                    inquiriesTableBody.innerHTML = '<tr><td colspan="6" class="loading"><i class="fas fa-inbox"></i> لا توجد استفسارات</td></tr>';
-                    return;
-                }
-                
-                inquiriesTableBody.innerHTML = '';
-                
-                inquiries.forEach(inquiry => {
-                    const row = document.createElement('tr');
-                    const date = inquiry.createdAt ? new Date(inquiry.createdAt).toLocaleString('ar-EG') : 'غير محدد';
-                    
-                    row.innerHTML = `
-                        <td>${inquiry.id.substring(0, 8)}...</td>
-                        <td>${inquiry.name}</td>
-                        <td>${inquiry.contact}</td>
-                        <td>${inquiry.message}</td>
-                        <td>${date}</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn btn-danger" onclick="deleteInquiry('${inquiry.id}')">حذف</button>
-                            </div>
-                        </td>
-                    `;
-                    inquiriesTableBody.appendChild(row);
-                });
-            }
-            
-            // حذف اقتراح
-            window.deleteSuggestion = async function(suggestionId) {
-                try {
-                    const csrfToken = getCsrfToken();
-                    const response = await fetch(`/api/suggestions/${suggestionId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        credentials: 'include',
-                        body: JSON.stringify({ 
-                            _csrf: csrfToken
-                        })
-                    });
-                    
-                    const result = await response.json();
-                    
-                    if (result.success) {
-                        messageEl.textContent = 'تم حذف الاقتراح بنجاح';
-                        messageEl.className = 'message success';
-                        messageEl.style.display = 'block';
-                        
-                        loadSuggestions();
-                        
-                        setTimeout(() => {
-                            messageEl.style.display = 'none';
-                        }, 3000);
-                    } else {
-                        messageEl.textContent = result.error || 'حدث خطأ أثناء حذف الاقتراح';
-                        messageEl.className = 'message error';
-                        messageEl.style.display = 'block';
-                    }
-                } catch (error) {
-                    console.error('Error deleting suggestion:', error);
-                    messageEl.textContent = 'حدث خطأ أثناء حذف الاقتراح';
-                    messageEl.className = 'message error';
-                    messageEl.style.display = 'block';
-                }
-            };
-            
-            // حذف استفسار
-            window.deleteInquiry = async function(inquiryId) {
-                try {
-                    const csrfToken = getCsrfToken();
-                    const response = await fetch(`/api/inquiries/${inquiryId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        credentials: 'include',
-                        body: JSON.stringify({ 
-                            _csrf: csrfToken
-                        })
-                    });
-                    
-                    const result = await response.json();
-                    
-                    if (result.success) {
-                        messageEl.textContent = 'تم حذف الاستفسار بنجاح';
-                        messageEl.className = 'message success';
-                        messageEl.style.display = 'block';
-                        
-                        loadInquiries();
-                        
-                        setTimeout(() => {
-                            messageEl.style.display = 'none';
-                        }, 3000);
-                    } else {
-                        messageEl.textContent = result.error || 'حدث خطأ أثناء حذف الاستفسار';
-                        messageEl.className = 'message error';
-                        messageEl.style.display = 'block';
-                    }
-                } catch (error) {
-                    console.error('Error deleting inquiry:', error);
-                    messageEl.textContent = 'حدث خطأ أثناء حذف الاستفسار';
-                    messageEl.className = 'message error';
-                    messageEl.style.display = 'block';
-                }
-            };
-            
             // تحديث الطلبات
             refreshBtn.addEventListener('click', function() {
                 refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> تحديث';
                 loadOrders();
                 setTimeout(() => {
                     refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> تحديث';
-                }, 1000);
-            });
-            
-            // تحديث الاقتراحات
-            document.getElementById('refreshSuggestionsBtn').addEventListener('click', function() {
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> تحديث';
-                loadSuggestions();
-                setTimeout(() => {
-                    this.innerHTML = '<i class="fas fa-sync-alt"></i> تحديث';
-                }, 1000);
-            });
-            
-            // تحديث الاستفسارات
-            document.getElementById('refreshInquiriesBtn').addEventListener('click', function() {
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> تحديث';
-                loadInquiries();
-                setTimeout(() => {
-                    this.innerHTML = '<i class="fas fa-sync-alt"></i> تحديث';
                 }, 1000);
             });
             
@@ -1030,7 +756,7 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            },
+                        },
                         credentials: 'include',
                         body: JSON.stringify({ _csrf: csrfToken })
                     });
@@ -1045,15 +771,11 @@
                 }
             });
             
-            // تحميل البيانات عند فتح الصفحة
+            // تحميل الطلبات عند فتح الصفحة
             loadOrders();
-            loadSuggestions();
-            loadInquiries();
             
             // تحديث تلقائي كل 30 ثانية
             setInterval(loadOrders, 30000);
-            setInterval(loadSuggestions, 30000);
-            setInterval(loadInquiries, 30000);
         });
     </script>
 </body>
