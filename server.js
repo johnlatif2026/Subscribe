@@ -238,114 +238,6 @@ app.post('/api/subscription-order', upload.single('transferScreenshot'), async (
   }
 });
 
-// API لإرسال اقتراح
-app.post('/api/suggestion', async (req, res) => {
-  try {
-    const { name, contact, message } = req.body;
-    
-    if (!name || !contact || !message) {
-      return res.status(400).json({ success: false, message: 'جميع الحقول مطلوبة' });
-    }
-    
-    // حفظ الاقتراح في Firestore
-    let suggestionId = null;
-    if (firebaseInitialized) {
-      const db = admin.firestore();
-      const suggestionRef = await db.collection('suggestions').add({
-        name,
-        contact,
-        message,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        type: 'suggestion'
-      });
-      suggestionId = suggestionRef.id;
-    }
-    
-    // إرسال إشعار على التيليجرام
-    if (telegramBot) {
-      const telegramMessage = `
-💡 اقتراح جديد
-━━━━━━━━━━━━━━━━━━━━
-👤 الاسم: ${name}
-📞 وسيلة التواصل: ${contact}
-💭 الاقتراح: ${message}
-🆔 الرقم: ${suggestionId || 'N/A'}
-⏰ الوقت: ${new Date().toLocaleString('ar-EG')}
-      `;
-      
-      try {
-        await telegramBot.sendMessage(process.env.TELEGRAM_CHAT_ID, telegramMessage);
-      } catch (error) {
-        console.error('Telegram send message error:', error);
-      }
-    }
-    
-    res.json({ 
-      success: true, 
-      message: 'تم إرسال اقتراحك بنجاح، شكراً لك!',
-      suggestionId: suggestionId
-    });
-    
-  } catch (error) {
-    console.error('Suggestion processing error:', error);
-    res.status(500).json({ success: false, message: 'حدث خطأ أثناء إرسال الاقتراح' });
-  }
-});
-
-// API لإرسال استفسار
-app.post('/api/inquiry', async (req, res) => {
-  try {
-    const { name, contact, message } = req.body;
-    
-    if (!name || !contact || !message) {
-      return res.status(400).json({ success: false, message: 'جميع الحقول مطلوبة' });
-    }
-    
-    // حفظ الاستفسار في Firestore
-    let inquiryId = null;
-    if (firebaseInitialized) {
-      const db = admin.firestore();
-      const inquiryRef = await db.collection('inquiries').add({
-        name,
-        contact,
-        message,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        type: 'inquiry'
-      });
-      inquiryId = inquiryRef.id;
-    }
-    
-    // إرسال إشعار على التيليجرام
-    if (telegramBot) {
-      const telegramMessage = `
-❓ استفسار جديد
-━━━━━━━━━━━━━━━━━━━━
-👤 الاسم: ${name}
-📞 وسيلة التواصل: ${contact}
-💭 الاستفسار: ${message}
-🆔 الرقم: ${inquiryId || 'N/A'}
-⏰ الوقت: ${new Date().toLocaleString('ar-EG')}
-      `;
-      
-      try {
-        await telegramBot.sendMessage(process.env.TELEGRAM_CHAT_ID, telegramMessage);
-      } catch (error) {
-        console.error('Telegram send message error:', error);
-      }
-    }
-    
-    res.json({ 
-      success: true, 
-      message: 'تم إرسال استفسارك بنجاح، سنرد عليك قريباً!',
-      inquiryId: inquiryId
-    });
-    
-  } catch (error) {
-    console.error('Inquiry processing error:', error);
-    res.status(500).json({ success: false, message: 'حدث خطأ أثناء إرسال الاستفسار' });
-  }
-});
-
 // جلب الطلبات للادمن
 app.get('/api/orders', authenticateToken, async (req, res) => {
   try {
@@ -373,64 +265,6 @@ app.get('/api/orders', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('Error fetching orders:', error);
     res.status(500).json({ error: 'Failed to fetch orders' });
-  }
-});
-
-// جلب الاقتراحات (للادمن فقط)
-app.get('/api/suggestions', authenticateToken, async (req, res) => {
-  try {
-    if (!firebaseInitialized) {
-      return res.json([]);
-    }
-    
-    const db = admin.firestore();
-    const suggestionsSnapshot = await db.collection('suggestions')
-      .orderBy('createdAt', 'desc')
-      .get();
-    
-    const suggestions = [];
-    suggestionsSnapshot.forEach(doc => {
-      const data = doc.data();
-      suggestions.push({
-        id: doc.id,
-        ...data,
-        createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null
-      });
-    });
-    
-    res.json(suggestions);
-  } catch (error) {
-    console.error('Error fetching suggestions:', error);
-    res.status(500).json({ error: 'Failed to fetch suggestions' });
-  }
-});
-
-// جلب الاستفسارات (للادمن فقط)
-app.get('/api/inquiries', authenticateToken, async (req, res) => {
-  try {
-    if (!firebaseInitialized) {
-      return res.json([]);
-    }
-    
-    const db = admin.firestore();
-    const inquiriesSnapshot = await db.collection('inquiries')
-      .orderBy('createdAt', 'desc')
-      .get();
-    
-    const inquiries = [];
-    inquiriesSnapshot.forEach(doc => {
-      const data = doc.data();
-      inquiries.push({
-        id: doc.id,
-        ...data,
-        createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null
-      });
-    });
-    
-    res.json(inquiries);
-  } catch (error) {
-    console.error('Error fetching inquiries:', error);
-    res.status(500).json({ error: 'Failed to fetch inquiries' });
   }
 });
 
@@ -470,57 +304,10 @@ app.put('/api/orders/:id', authenticateToken, csrfProtection, async (req, res) =
   }
 });
 
-// حذف اقتراح (للادمن فقط)
-app.delete('/api/suggestions/:id', authenticateToken, csrfProtection, async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    if (!firebaseInitialized) {
-      return res.status(500).json({ error: 'Firebase not initialized' });
-    }
-    
-    const db = admin.firestore();
-    await db.collection('suggestions').doc(id).delete();
-    
-    res.json({ success: true, message: 'تم حذف الاقتراح' });
-  } catch (error) {
-    console.error('Error deleting suggestion:', error);
-    res.status(500).json({ error: 'Failed to delete suggestion' });
-  }
-});
-
-// حذف استفسار (للادمن فقط)
-app.delete('/api/inquiries/:id', authenticateToken, csrfProtection, async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    if (!firebaseInitialized) {
-      return res.status(500).json({ error: 'Firebase not initialized' });
-    }
-    
-    const db = admin.firestore();
-    await db.collection('inquiries').doc(id).delete();
-    
-    res.json({ success: true, message: 'تم حذف الاستفسار' });
-  } catch (error) {
-    console.error('Error deleting inquiry:', error);
-    res.status(500).json({ error: 'Failed to delete inquiry' });
-  }
-});
-
 // 🔹 تسجيل الخروج
 app.post('/api/admin/logout', (req, res) => {
   res.clearCookie('token');
   res.json({ success: true, message: 'تم تسجيل الخروج بنجاح' });
-});
-
-// حماية الـAPIs من الوصول المباشر
-app.get('/api/suggestion', (req, res) => {
-  res.status(401).json({ success: false, message: 'Unauthorized' });
-});
-
-app.get('/api/inquiry', (req, res) => {
-  res.status(401).json({ success: false, message: 'Unauthorized' });
 });
 
 app.listen(PORT, () => {
