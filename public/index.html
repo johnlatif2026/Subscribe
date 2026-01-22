@@ -283,7 +283,7 @@
           <img src="https://upload.wikimedia.org/wikipedia/commons/7/75/Netflix_icon.svg" alt="Netflix Logo" class="sub-logo" />
           <h3>Netflix</h3>
           <div class="price">اختار الباقة</div>
-          <div class="duration">شهري / سنوي</div>
+          <div class="duration">شهري</div>
           <p>اختار المدة ثم الباقة المناسبة لك مع تفاصيل كاملة.</p>
           <button class="btn" onclick="openPlansModal('netflix')">اشترك الآن</button>
         </div>
@@ -893,19 +893,11 @@
           monthly: {
             label: "شهري",
             plans: [
-              { id: "nf_m_basic", name: "Basic", price: 260, currency: "EGP", details: ["جودة HD", "شاشة واحدة", "تفعيل سريع"] },
-              { id: "nf_m_standard", name: "Standard", price: 320, currency: "EGP", details: ["جودة Full HD", "شاشتين", "تفعيل سريع"] },
-              { id: "nf_m_premium", name: "Premium", price: 380, currency: "EGP", details: ["جودة 4K", "4 شاشات", "تفعيل سريع"] },
+              { id: "nf_m_basic", name: "Basic", price: 130, currency: "EGP", details: ["جودة : 720", "عدد الاجهزة : جهاز واحد", "جودة الصورة والصوت : جيدة", "الأجهزة المدعومة : التلفزيون، الكمبيوتر، هاتف جوال، كمبيوتر لوحي"] },
+              { id: "nf_m_standard", name: "Standard", price: 200, currency: "EGP", details: ["جودة : 1080", "عدد الاجهزة : جهازين", "جودة الصورة والصوت : رائعة", "الأجهزة المدعومة : التلفزيون، الكمبيوتر، هاتف جوال، كمبيوتر لوحي"] },
+              { id: "nf_m_premium", name: "Premium", price: 265, currency: "EGP", details: ["جودة : 4K + تقنية HDR", "عدد الاجهزة : 4", "جودة الصورة والصوت : الأفضل", "الأجهزة المدعومة : التلفزيون، الكمبيوتر، هاتف جوال، كمبيوتر لوحي"] },
             ]
           },
-          yearly: {
-            label: "سنوي",
-            plans: [
-              { id: "nf_y_basic", name: "Basic (Yearly)", price: 2600, currency: "EGP", details: ["جودة HD", "شاشة واحدة", "خصم مقارنة بالشهري"] },
-              { id: "nf_y_standard", name: "Standard (Yearly)", price: 3200, currency: "EGP", details: ["جودة Full HD", "شاشتين", "خصم مقارنة بالشهري"] },
-              { id: "nf_y_premium", name: "Premium (Yearly)", price: 3800, currency: "EGP", details: ["جودة 4K", "4 شاشات", "خصم مقارنة بالشهري"] },
-            ]
-          }
         }
       },
 
@@ -916,15 +908,15 @@
           monthly: {
             label: "شهري",
             plans: [
-              { id: "wi_m_basic", name: "Basic", price: 120, currency: "EGP", details: ["محتوى عربي", "شاشة واحدة", "تفعيل سريع"] },
-              { id: "wi_m_plus", name: "Plus", price: 160, currency: "EGP", details: ["محتوى أوسع", "شاشتين", "تفعيل سريع"] },
+              { id: "wi_m_basic", name: "Basic", price: 40, currency: "EGP", details: ["من خلال الاشتراك الشهري، يمكنك المشاهدة بإعلانات من خلال 3 شاشات في نفس الوقت و يمكنك التحكم في اشتراكك من خلال التطبيق"] },
+              { id: "wi_m_plus", name: "Plus", price: 140, currency: "EGP", details: ["من خلال الاشتراك الشهري، يمكنك المشاهدة من خلال 3 شاشات في نفس الوقت بدون إعلانات و يمكنك التحكم في اشتراكك من خلال التطبيق"] },
             ]
           },
           yearly: {
             label: "سنوي",
             plans: [
-              { id: "wi_y_basic", name: "Basic (Yearly)", price: 1200, currency: "EGP", details: ["محتوى عربي", "شاشة واحدة", "خصم سنوي"] },
-              { id: "wi_y_plus", name: "Plus (Yearly)", price: 1600, currency: "EGP", details: ["محتوى أوسع", "شاشتين", "خصم سنوي"] },
+              { id: "wi_y_basic", name: "Basic (Yearly)", price: 150, currency: "EGP", details: ["من خلال الاشتراك السنوي، يمكنك المشاهدة بإعلانات من خلال 3 شاشات في نفس الوقت و يمكنك التحكم في اشتراكك من خلال التطبيق"] },
+              { id: "wi_y_plus", name: "Plus (Yearly)", price: 600, currency: "EGP", details: ["من خلال الاشتراك السنوي، يمكنك المشاهدة من خلال 3 شاشات في نفس الوقت بدون إعلانات و يمكنك التحكم في اشتراكك من خلال التطبيق"] },
             ]
           }
         }
@@ -937,15 +929,21 @@
           monthly: {
             label: "شهري",
             plans: [
-              { id: "sh_m_vip", name: "VIP", price: 180, currency: "EGP", details: ["مكتبة عربية كبيرة", "بدون إعلانات (حسب الباقة)", "تفعيل سريع"] },
-              { id: "sh_m_sports", name: "VIP + Sports", price: 260, currency: "EGP", details: ["محتوى VIP", "رياضة (حسب الباقة)", "تفعيل سريع"] },
+              { id: "sh_m_vip_mobile", name: "VIP Mobile", price: 65, currency: "EGP", details: ["أعمال شاهد الأصلية، مسلسلات حصرية، عروض أولى للأفلام وقنوات مباشرة."] },
+              { id: "sh_m_vip", name: "VIP", price: 180, currency: "EGP", details: ["أعمال شاهد الأصلية، مسلسلات حصرية، عروض أولى للأفلام وقنوات مباشرة."] },
+              { id: "sh_m_vip_bigtime", name: "VIP | BigTime", price: 310, currency: "EGP", details:["مواسم الرياض وجدة: حفلات وعروض مباشرة، فعاليات استثنائية، ومزايا VIP الحصرية."] },
+              { id: "sh_m_bip_sports", name: "VIP | رياضة", price: 360, currency: "EGP", details: ["مباريات وتصفيات دولية، بطولات عالمية، ومواجهات كبرى، مع كل مزايا VIP."] },
+              { id: "sh_m_Comprehensive", name: "الشامل", price: 700, currency: "EGP", details: ["عالم من الترفيه: كل مزايا VIP ، مواسم الرياض وجدّة، مباريات وبطولات رياضية وأكثر."] },
             ]
           },
           yearly: {
             label: "سنوي",
             plans: [
-              { id: "sh_y_vip", name: "VIP (Yearly)", price: 1800, currency: "EGP", details: ["مكتبة عربية كبيرة", "خصم سنوي", "تفعيل سريع"] },
-              { id: "sh_y_sports", name: "VIP + Sports (Yearly)", price: 2600, currency: "EGP", details: ["VIP + رياضة", "خصم سنوي", "تفعيل سريع"] },
+              { id: "sh_m_vip_mobile", name: "VIP (Yearly)", price: 420, currency: "EGP", details: ["أعمال شاهد الأصلية، مسلسلات حصرية، عروض أولى للأفلام وقنوات مباشرة."] },
+              { id: "sh_m_vip", name: "VIP + Sports (Yearly)", price: 1750, currency: "EGP", details: ["أعمال شاهد الأصلية، مسلسلات حصرية، عروض أولى للأفلام وقنوات مباشرة."] },
+              { id: "sh_m_vip_bigtime", name: "VIP + Sports (Yearly)", price: 3000, currency: "EGP", details: ["مواسم الرياض وجدة: حفلات وعروض مباشرة، فعاليات استثنائية، ومزايا VIP الحصرية."] },
+              { id: "sh_m_bip_sports", name: "VIP + Sports (Yearly)", price: 5000, currency: "EGP", details: ["مباريات وتصفيات دولية، بطولات عالمية، ومواجهات كبرى، مع كل مزايا VIP."] },
+              { id: "sh_m_Comprehensive", name: "VIP + Sports (Yearly)", price: 7400, currency: "EGP", details: ["عالم من الترفيه: كل مزايا VIP ، مواسم الرياض وجدّة، مباريات وبطولات رياضية وأكثر."] },
             ]
           }
         }
