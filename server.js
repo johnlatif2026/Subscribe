@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static('public'));
 
-// ✅ ملاحظة أمنية: ما بنعملش static لـ uploads عشان تبقى للأدمن فقط
+// ✅ ما نعملش static للـ uploads عشان الصور تبقى للأدمن فقط
 // app.use('/uploads', express.static('uploads'));
 
 // إنشاء مجلد التحميلات إذا لم يكن موجوداً
@@ -31,7 +31,7 @@ const csrfProtection = csrf({
   cookie: {
     key: '_csrf',
     httpOnly: true,
-    secure: false,   // خليها true في production مع HTTPS
+    secure: false, // اجعلها true في production مع HTTPS
     sameSite: 'lax'
   }
 });
@@ -91,21 +91,42 @@ if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) {
   telegramBot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: false });
 }
 
-// بيانات الاشتراكات الأساسية (دي بتفيد لو العميل مبعتش باقة)
+// ✅ السعر الأساسي لكل منصة (ده اللي انت عاوزه يظهر كـ "السعر الأساسي")
 const subscriptions = [
-  { id: 1, name: 'نيتفلكس', price: 260, duration: 'شهر' },
-  { id: 2, name: 'واتش ات', price: 35, duration: 'شهر' },
-  { id: 3, name: 'شاهد', price: 25, duration: 'شهر' },
-  { id: 4, name: 'يانجو بلاي', price: 30, duration: 'شهر' }
+  { id: 1, name: 'نيتفلكس', basePrice: 260 },
+  { id: 2, name: 'واتش ات', basePrice: 35 },
+  { id: 3, name: 'شاهد', basePrice: 25 },
+  { id: 4, name: 'يانجو بلاي', basePrice: 30 }
 ];
+
+// ✅ كتالوج الباقات الحقيقي (أنت عدّله بالأسعار اللي عندك)
+const plansCatalog = {
+  1: [ // Netflix
+    { key: 'netflix_basic_month', name: 'Basic', duration: 'شهري', price: 260 },
+    { key: 'netflix_standard_month', name: 'Standard', duration: 'شهري', price: 320 },
+    { key: 'netflix_premium_month', name: 'Premium', duration: 'شهري', price: 380 },
+    { key: 'netflix_premium_year', name: 'Premium', duration: 'سنوي', price: 4200 }
+  ],
+  2: [ // Watch IT
+    { key: 'watchit_vip_month', name: 'VIP', duration: 'شهري', price: 35 },
+    { key: 'watchit_vip_year', name: 'VIP', duration: 'سنوي', price: 350 }
+  ],
+  3: [ // Shahid
+    { key: 'shahid_vip_month', name: 'VIP', duration: 'شهري', price: 120 },
+    { key: 'shahid_vip_year', name: 'VIP', duration: 'سنوي', price: 1200 }
+  ]
+};
+
+// ✅ helper: يجيب باقة من الكتالوج
+function getPlan(subscriptionId, planKey) {
+  const list = plansCatalog[String(subscriptionId)] || plansCatalog[Number(subscriptionId)] || [];
+  return list.find(p => p.key === planKey) || null;
+}
 
 // Middleware للتحقق من JWT (للادمن فقط)
 const authenticateToken = (req, res, next) => {
   const token = req.cookies.token;
-
-  if (!token) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
+  if (!token) return res.status(401).json({ error: 'Unauthorized' });
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
@@ -128,7 +149,6 @@ app.get('/login.html', csrfProtection, (req, res) => {
 });
 
 app.get('/dashboard.html', (req, res, next) => {
-  // HTML نفسه لازم يتفتح لو التوكن موجود، وإلا يحول لوجين
   const token = req.cookies.token;
   if (!token) return res.redirect('/login.html');
 
@@ -142,6 +162,13 @@ app.get('/dashboard.html', (req, res, next) => {
 }, csrfProtection, (req, res) => {
   res.cookie('XSRF-TOKEN', req.csrfToken(), { httpOnly: false, sameSite: 'lax', secure: false });
   res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
+});
+
+// ✅ (اختياري) endpoint يرجّع الباقات للفرونت لو حابب تسحبها ديناميك
+app.get('/api/plans/:subscriptionId', (req, res) => {
+  const { subscriptionId } = req.params;
+  const plans = plansCatalog[String(subscriptionId)] || [];
+  res.json(plans);
 });
 
 // ✅ تسجيل الدخول مع حماية CSRF
@@ -163,64 +190,57 @@ app.post('/api/admin/login', csrfProtection, (req, res) => {
   res.status(401).json({ success: false, message: 'اسم المستخدم أو كلمة المرور غير صحيحة' });
 });
 
-// ✅ طلب اشتراك من العميل (بدون تسجيل دخول) + رفع صورة
+// ✅ طلب اشتراك من العميل + رفع صورة
+// ✅ المطلوب من الفرونت: subscriptionId + planKey + باقي البيانات
 app.post('/api/subscription-order', upload.single('transferScreenshot'), async (req, res) => {
   try {
     const {
       subscriptionId,
+      planKey, // ✅ ده أهم حاجة: مفتاح الباقة المختارة
       accountName,
       email,
       phone,
-      transferNumber,
-
-      // ✅ حقول الباقة الجديدة
-      planId,
-      planName,
-      planDuration, // monthly | yearly
-      planPrice
+      transferNumber
     } = req.body;
 
-    const subscription = subscriptions.find(sub => sub.id === parseInt(subscriptionId));
-
+    const subscription = subscriptions.find(s => s.id === Number(subscriptionId));
     if (!subscription) {
       if (req.file) fs.unlinkSync(req.file.path);
-      return res.status(400).json({ success: false, message: 'الاشتراك غير موجود' });
+      return res.status(400).json({ success: false, message: 'المنصة غير موجودة' });
+    }
+
+    const plan = getPlan(subscriptionId, planKey);
+    if (!plan) {
+      if (req.file) fs.unlinkSync(req.file.path);
+      return res.status(400).json({ success: false, message: 'الباقة غير صحيحة أو غير موجودة' });
     }
 
     if (!req.file) {
       return res.status(400).json({ success: false, message: 'يجب رفع صورة التحويل' });
     }
 
-    const screenshotPath = '/uploads/' + req.file.filename; // ✅ نخزنها كمسار منطقي
-
-    // ✅ Normalize للمدة
-    const normalizedDuration =
-      planDuration === 'monthly' ? 'شهري' :
-      planDuration === 'yearly'  ? 'سنوي' : null;
-
-    const parsedPlanPrice = planPrice ? Number(planPrice) : null;
-    const finalPrice = Number.isFinite(parsedPlanPrice) ? parsedPlanPrice : subscription.price;
-    const finalPlanName = planName || subscription.name;
+    const screenshotPath = '/uploads/' + req.file.filename;
 
     let orderId = null;
 
-    // حفظ الطلب في Firestore
     if (firebaseInitialized) {
       const db = admin.firestore();
 
       const orderRef = await db.collection('orders').add({
+        // platform
         subscriptionId: String(subscriptionId),
         subscriptionName: subscription.name,
 
-        // ✅ بيانات الباقة
-        planId: planId || null,
-        planName: finalPlanName,
-        planDuration: normalizedDuration,  // "شهري" | "سنوي" | null
-        planPrice: finalPrice,
+        // ✅ السعر الأساسي
+        basePrice: subscription.basePrice,
 
-        // ✅ للتوافق لو كنت بتعتمد على القديم
-        subscriptionPrice: finalPrice,
+        // ✅ تفاصيل الباقة المختارة
+        planKey: plan.key,
+        planName: plan.name,        // VIP / Premium ...
+        planDuration: plan.duration, // شهري / سنوي
+        planPrice: plan.price,      // سعر الباقة المختارة
 
+        // user
         accountName,
         email,
         phone,
@@ -235,39 +255,31 @@ app.post('/api/subscription-order', upload.single('transferScreenshot'), async (
       orderId = orderRef.id;
     }
 
-    // إرسال إشعار تيليجرام
     if (telegramBot) {
       const secureScreenshotUrl =
         `${req.protocol}://${req.get('host')}/api/screenshot/${encodeURIComponent(req.file.filename)}`;
 
-      const message = `
-🎯 طلب اشتراك جديد من العميل
+      const msg = `
+🎯 طلب اشتراك جديد
 ━━━━━━━━━━━━━━━━━━━━
 📺 المنصة: ${subscription.name}
-📦 الباقة: ${finalPlanName}
-🗓️ المدة: ${normalizedDuration || 'غير محدد'}
-💰 السعر: ${finalPrice} جنيه
+💵 السعر الأساسي: ${subscription.basePrice} جنيه
+📦 الباقة: ${plan.name}
+🗓️ المدة: ${plan.duration}
+💰 سعر الباقة: ${plan.price} جنيه
 👤 اسم الحساب: ${accountName}
-📧 البريد الإلكتروني: ${email}
-📞 رقم الهاتف: ${phone}
+📧 البريد: ${email}
+📞 الهاتف: ${phone}
 🔢 رقم التحويل: ${transferNumber}
-🖼️ صورة التحويل: ${secureScreenshotUrl}
+🖼️ السكرين: ${secureScreenshotUrl}
 🆔 رقم الطلب: ${orderId || 'N/A'}
 ⏰ الوقت: ${new Date().toLocaleString('ar-EG')}
       `;
-
-      try {
-        await telegramBot.sendMessage(process.env.TELEGRAM_CHAT_ID, message);
-      } catch (error) {
-        console.error('Telegram send message error:', error);
-      }
+      try { await telegramBot.sendMessage(process.env.TELEGRAM_CHAT_ID, msg); }
+      catch (e) { console.error('Telegram error:', e); }
     }
 
-    res.json({
-      success: true,
-      message: 'تم استلام طلبك بنجاح وسيتم مراجعته قريباً',
-      orderId
-    });
+    res.json({ success: true, message: 'تم استلام طلبك بنجاح', orderId });
 
   } catch (error) {
     console.error('Order processing error:', error);
@@ -282,13 +294,10 @@ app.get('/api/orders', authenticateToken, async (req, res) => {
     if (!firebaseInitialized) return res.json([]);
 
     const db = admin.firestore();
-
-    const ordersSnapshot = await db.collection('orders')
-      .orderBy('createdAt', 'desc')
-      .get();
+    const snap = await db.collection('orders').orderBy('createdAt', 'desc').get();
 
     const orders = [];
-    ordersSnapshot.forEach(doc => {
+    snap.forEach(doc => {
       const data = doc.data();
       orders.push({
         id: doc.id,
@@ -323,13 +332,13 @@ app.put('/api/orders/:id', authenticateToken, csrfProtection, async (req, res) =
     const { id } = req.params;
     const { status } = req.body;
 
-    if (!firebaseInitialized) {
-      return res.status(500).json({ error: 'Firebase not initialized' });
-    }
-
     const allowed = ['pending', 'completed', 'cancelled'];
     if (!allowed.includes(status)) {
       return res.status(400).json({ success: false, error: 'Status not allowed' });
+    }
+
+    if (!firebaseInitialized) {
+      return res.status(500).json({ error: 'Firebase not initialized' });
     }
 
     const db = admin.firestore();
@@ -345,7 +354,7 @@ app.put('/api/orders/:id', authenticateToken, csrfProtection, async (req, res) =
   }
 });
 
-// ✅ تسجيل الخروج (CSRF اختياري هنا بس خلّيناه موجود عندك في الفرونت)
+// ✅ تسجيل الخروج
 app.post('/api/admin/logout', (req, res) => {
   res.clearCookie('token');
   res.json({ success: true, message: 'تم تسجيل الخروج بنجاح' });
