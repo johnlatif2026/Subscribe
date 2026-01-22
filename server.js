@@ -42,7 +42,7 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/');
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     cb(null, 'screenshot-' + uniqueSuffix + path.extname(file.originalname));
   }
 });
@@ -91,29 +91,42 @@ if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) {
   telegramBot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: false });
 }
 
-// ✅ السعر الأساسي لكل منصة (ده اللي انت عاوزه يظهر كـ "السعر الأساسي")
+// ✅ السعر الأساسي لكل منصة
 const subscriptions = [
   { id: 1, name: 'نيتفلكس', basePrice: 260 },
   { id: 2, name: 'واتش ات', basePrice: 35 },
-  { id: 3, name: 'شاهد', basePrice: 25 },
-  { id: 4, name: 'يانجو بلاي', basePrice: 30 }
+  { id: 3, name: 'شاهد', basePrice: 25 }
 ];
 
-// ✅ كتالوج الباقات الحقيقي (أنت عدّله بالأسعار اللي عندك)
+// ✅ كتالوج الباقات (لازم keys تطابق planKey اللي الفرونت بيبعته)
 const plansCatalog = {
   1: [ // Netflix
-    { key: 'netflix_basic_month', name: 'Basic', duration: 'شهري', price: 260 },
-    { key: 'netflix_standard_month', name: 'Standard', duration: 'شهري', price: 320 },
-    { key: 'netflix_premium_month', name: 'Premium', duration: 'شهري', price: 380 },
-    { key: 'netflix_premium_year', name: 'Premium', duration: 'سنوي', price: 4200 }
+    { key: 'nf_m_basic', name: 'Basic', duration: 'شهري', price: 130 },
+    { key: 'nf_m_standard', name: 'Standard', duration: 'شهري', price: 200 },
+    { key: 'nf_m_premium', name: 'Premium', duration: 'شهري', price: 265 }
   ],
+
   2: [ // Watch IT
-    { key: 'watchit_vip_month', name: 'VIP', duration: 'شهري', price: 35 },
-    { key: 'watchit_vip_year', name: 'VIP', duration: 'سنوي', price: 350 }
+    { key: 'wi_m_basic', name: 'Basic', duration: 'شهري', price: 40 },
+    { key: 'wi_m_plus', name: 'Plus', duration: 'شهري', price: 140 },
+    { key: 'wi_y_basic', name: 'Basic', duration: 'سنوي', price: 150 },
+    { key: 'wi_y_plus', name: 'Plus', duration: 'سنوي', price: 600 }
   ],
+
   3: [ // Shahid
-    { key: 'shahid_vip_month', name: 'VIP', duration: 'شهري', price: 120 },
-    { key: 'shahid_vip_year', name: 'VIP', duration: 'سنوي', price: 1200 }
+    // شهري
+    { key: 'sh_m_vip_mobile', name: 'VIP Mobile', duration: 'شهري', price: 65 },
+    { key: 'sh_m_vip', name: 'VIP', duration: 'شهري', price: 180 },
+    { key: 'sh_m_vip_bigtime', name: 'VIP | BigTime', duration: 'شهري', price: 310 },
+    { key: 'sh_m_bip_sports', name: 'VIP | رياضة', duration: 'شهري', price: 360 },
+    { key: 'sh_m_Comprehensive', name: 'الشامل', duration: 'شهري', price: 700 },
+
+    // سنوي (مفاتيح مختلفة عن الشهري)
+    { key: 'sh_y_vip_mobile', name: 'VIP (Yearly)', duration: 'سنوي', price: 420 },
+    { key: 'sh_y_vip', name: 'VIP + Sports (Yearly)', duration: 'سنوي', price: 1750 },
+    { key: 'sh_y_vip_bigtime', name: 'VIP + Sports (Yearly)', duration: 'سنوي', price: 3000 },
+    { key: 'sh_y_bip_sports', name: 'VIP + Sports (Yearly)', duration: 'سنوي', price: 5000 },
+    { key: 'sh_y_Comprehensive', name: 'VIP + Sports (Yearly)', duration: 'سنوي', price: 7400 }
   ]
 };
 
@@ -164,7 +177,7 @@ app.get('/dashboard.html', (req, res, next) => {
   res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
 });
 
-// ✅ (اختياري) endpoint يرجّع الباقات للفرونت لو حابب تسحبها ديناميك
+// ✅ endpoint يرجّع الباقات للفرونت (لو حبيت تستخدمه)
 app.get('/api/plans/:subscriptionId', (req, res) => {
   const { subscriptionId } = req.params;
   const plans = plansCatalog[String(subscriptionId)] || [];
@@ -196,7 +209,7 @@ app.post('/api/subscription-order', upload.single('transferScreenshot'), async (
   try {
     const {
       subscriptionId,
-      planKey, // ✅ ده أهم حاجة: مفتاح الباقة المختارة
+      planKey, // ✅ لازم تيجي من الفرونت
       accountName,
       email,
       phone,
@@ -236,9 +249,9 @@ app.post('/api/subscription-order', upload.single('transferScreenshot'), async (
 
         // ✅ تفاصيل الباقة المختارة
         planKey: plan.key,
-        planName: plan.name,        // VIP / Premium ...
+        planName: plan.name,         // VIP / Premium ...
         planDuration: plan.duration, // شهري / سنوي
-        planPrice: plan.price,      // سعر الباقة المختارة
+        planPrice: plan.price,       // سعر الباقة المختارة
 
         // user
         accountName,
