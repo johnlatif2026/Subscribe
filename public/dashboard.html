@@ -4,11 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>لوحة التحكم - إدارة الطلبات</title>
-
   <style>
     *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
     body{background:#f5f7fa;color:#333;overflow-x:hidden}
-
     .header{background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.08);padding:1rem 0;position:sticky;top:0;z-index:100;transition:.3s}
     .header-scrolled{padding:.7rem 0;box-shadow:0 6px 20px rgba(0,0,0,.1)}
     .nav-container{max-width:1400px;margin:0 auto;padding:0 20px;display:flex;justify-content:space-between;align-items:center}
@@ -17,168 +15,50 @@
     .logo i{margin-left:10px;font-size:1.3rem}
     .user-menu{display:flex;align-items:center;gap:1.5rem}
     .user-menu span{color:#555;font-weight:500}
-
-    .btn{
-      background:linear-gradient(to left,#667eea,#764ba2);
-      color:#fff;padding:.6rem 1.2rem;border:0;border-radius:8px;cursor:pointer;
-      transition:.3s;font-weight:600;box-shadow:0 4px 10px rgba(118,75,162,.2);
-      position:relative;overflow:hidden
-    }
+    .btn{background:linear-gradient(to left,#667eea,#764ba2);color:#fff;padding:.6rem 1.2rem;border:0;border-radius:8px;cursor:pointer;transition:.3s;font-weight:500;box-shadow:0 4px 10px rgba(118,75,162,.2);position:relative;overflow:hidden}
     .btn:hover{transform:translateY(-3px);box-shadow:0 6px 15px rgba(118,75,162,.3)}
     .btn:active{transform:translateY(-1px)}
     .btn-success{background:linear-gradient(to left,#28a745,#20c997)}
     .btn-danger{background:linear-gradient(to left,#dc3545,#e83e8c)}
-
     .container{max-width:1400px;margin:2rem auto;padding:0 20px}
-
-    .stats-section{
-      display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-      gap:1.5rem;margin-bottom:2.5rem
-    }
-    .stat-card{
-      background:#fff;border-radius:12px;padding:1.8rem;text-align:center;
-      box-shadow:0 5px 15px rgba(0,0,0,.06);transition:.4s;border-top:4px solid transparent
-    }
+    .stats-section{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;margin-bottom:2.5rem}
+    .stat-card{background:#fff;border-radius:12px;padding:1.8rem;text-align:center;box-shadow:0 5px 15px rgba(0,0,0,.06);transition:.4s;border-top:4px solid transparent}
     .stat-card:nth-child(1){border-top-color:#667eea}
     .stat-card:nth-child(2){border-top-color:#ffc107}
     .stat-card:nth-child(3){border-top-color:#28a745}
     .stat-card:nth-child(4){border-top-color:#dc3545}
     .stat-card:hover{transform:translateY(-8px);box-shadow:0 12px 25px rgba(0,0,0,.1)}
-
     .stat-number{font-size:2.5rem;font-weight:800;color:#764ba2;margin-bottom:.5rem}
-    .stat-label{color:#666;font-size:.95rem;font-weight:600}
-
+    .stat-label{color:#666;font-size:.95rem;font-weight:500}
     .orders-section{background:#fff;border-radius:15px;padding:2.5rem;box-shadow:0 8px 25px rgba(0,0,0,.08)}
-    .section-title{
-      margin-bottom:1.5rem;color:#333;border-bottom:2px solid #f0f0f0;padding-bottom:1rem;
-      display:flex;justify-content:space-between;align-items:center;gap:12px
-    }
+    .section-title{margin-bottom:2rem;color:#333;border-bottom:2px solid #f0f0f0;padding-bottom:1rem;display:flex;justify-content:space-between;align-items:center}
     .section-title h2{font-size:1.5rem}
-
-    .refresh-btn{
-      background:linear-gradient(to left,#17a2b8,#6f42c1);
-      color:#fff;border:0;padding:.6rem 1.2rem;border-radius:8px;cursor:pointer;
-      font-weight:700;transition:.3s;display:flex;align-items:center;gap:8px
-    }
+    .refresh-btn{background:linear-gradient(to left,#17a2b8,#6f42c1);color:#fff;border:0;padding:.6rem 1.2rem;border-radius:8px;cursor:pointer;font-weight:500;transition:.3s;display:flex;align-items:center;gap:8px}
     .refresh-btn:hover{transform:translateY(-3px)}
-
-    /* ✅ Wrapper للجدول علشان الموبايل */
-    .table-wrap{
-      width:100%;
-      overflow:auto;
-      border-radius:12px;
-      box-shadow:0 2px 8px rgba(0,0,0,.04);
-      -webkit-overflow-scrolling: touch;
-      margin-top: 1rem;
-    }
-
-    /* ✅ تحسين الجدول + منع خروج الكلام */
-    .orders-table{
-      width:100%;
-      min-width:1250px;
-      border-collapse:separate;
-      border-spacing:0;
-      background:#fff;
-    }
-
-    .orders-table th,.orders-table td{
-      padding:12px 14px;
-      text-align:right;
-      border-bottom:1px solid #f0f0f0;
-      vertical-align:top;
-
-      /* ✅ أهم جزء: خلي الكلام يلف */
-      white-space: normal;
-      word-break: break-word;
-      overflow-wrap: anywhere;
-    }
-
-    .orders-table th{
-      background:#f8f9fa;
-      font-weight:800;
-      position:sticky;
-      top:0;
-      z-index:2;
-    }
-    .orders-table tr:hover{background:#fafafa}
-
-    /* ✅ ستاتس */
-    .status-pending{background:#fff3cd;color:#856404;padding:.35rem .75rem;border-radius:20px;font-size:.85rem;font-weight:800;display:inline-block}
-    .status-completed{background:#d1edff;color:#004085;padding:.35rem .75rem;border-radius:20px;font-size:.85rem;font-weight:800;display:inline-block}
-    .status-cancelled{background:#f8d7da;color:#721c24;padding:.35rem .75rem;border-radius:20px;font-size:.85rem;font-weight:800;display:inline-block}
-
+    .orders-table{width:100%;border-collapse:collapse;margin-top:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,.04);border-radius:10px;overflow:hidden}
+    .orders-table th,.orders-table td{padding:1rem;text-align:right;border-bottom:1px solid #f0f0f0;white-space:nowrap;vertical-align:top}
+    .orders-table th{background:#f8f9fa;font-weight:700;position:sticky;top:0;z-index:1}
+    .orders-table tr:hover{background:#f8f9fa}
+    .status-pending{background:#fff3cd;color:#856404;padding:.35rem .75rem;border-radius:20px;font-size:.85rem;font-weight:600;display:inline-block}
+    .status-completed{background:#d1edff;color:#004085;padding:.35rem .75rem;border-radius:20px;font-size:.85rem;font-weight:600;display:inline-block}
+    .status-cancelled{background:#f8d7da;color:#721c24;padding:.35rem .75rem;border-radius:20px;font-size:.85rem;font-weight:600;display:inline-block}
     .loading{text-align:center;padding:2.5rem;color:#666;font-size:1.1rem}
-
-    /* ✅ الإجراءات */
-    .action-buttons{
-      display:flex;
-      gap:8px;
-      justify-content:flex-start;
-      flex-wrap:wrap;
-      min-width:150px;
-    }
-    .action-buttons .btn{padding:.45rem .9rem;font-size:.85rem;border-radius:10px}
-
-    /* ✅ رسائل */
+    .action-buttons{display:flex;gap:.5rem;justify-content:center}
+    .action-buttons .btn{padding:.4rem .8rem;font-size:.85rem}
     .message{margin-top:1.5rem;padding:1rem;border-radius:8px;text-align:center;display:none}
     .success{background:#d4edda;color:#155724;border:1px solid #c3e6cb}
     .error{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb}
-
-    /* ✅ Ellipsis للأعمدة اللي بتطول */
-    .cell-ellipsis{
-      max-width:220px;
-      white-space:nowrap !important;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .cell-ellipsis.sm{max-width:140px}
-    .cell-ellipsis.md{max-width:220px}
-    .cell-ellipsis.lg{max-width:320px}
-
-    /* ✅ سطرين بالكتير */
-    .cell-clamp-2{
-      max-width:260px;
-      display:-webkit-box;
-      -webkit-line-clamp:2;
-      -webkit-box-orient:vertical;
-      overflow:hidden;
-    }
-
-    /* ✅ رابط السكرين */
-    .screenshot-link{
-      color:#764ba2;
-      font-weight:800;
-      text-decoration:underline;
-      cursor:pointer;
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-    }
-    .screenshot-link::before{content:"🖼️"}
-
-    /* ✅ مودال الصورة */
+    .screenshot-link{color:#764ba2;text-decoration:underline;cursor:pointer}
     .image-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);justify-content:center;align-items:center;z-index:2000}
     .image-modal.active{display:flex}
     .image-modal-content{max-width:92%;max-height:92%;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
-    .image-modal-close{
-      position:absolute;top:20px;left:20px;color:#fff;font-size:2rem;cursor:pointer;
-      background:rgba(0,0,0,.5);width:42px;height:42px;border-radius:50%;
-      display:flex;align-items:center;justify-content:center
-    }
-
-    @media (max-width:768px){
-      .orders-section{padding:1.2rem}
-      .stats-section{grid-template-columns:1fr}
-      .section-title{flex-direction:column;align-items:flex-start}
-      .orders-table{min-width:1100px}
-    }
+    .image-modal-close{position:absolute;top:20px;left:20px;color:#fff;font-size:2rem;cursor:pointer;background:rgba(0,0,0,.5);width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+    @media (max-width:768px){.orders-table{display:block;overflow-x:auto}.stats-section{grid-template-columns:1fr}.section-title{flex-direction:column;gap:1rem;align-items:flex-start}.action-buttons{flex-direction:column}}
   </style>
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
-
   <div id="imageModal" class="image-modal">
     <span class="image-modal-close" id="closeImageModal">&times;</span>
     <img id="modalImage" class="image-modal-content" src="" alt="سكرين التحويل">
@@ -208,32 +88,29 @@
         <button id="refreshBtn" class="refresh-btn"><i class="fas fa-sync-alt"></i> تحديث</button>
       </div>
 
-      <!-- ✅ Wrapper -->
-      <div class="table-wrap">
-        <table class="orders-table">
-          <thead>
-            <tr>
-              <th>رقم الطلب</th>
-              <th>المنصة</th>
-              <th>السعر الأساسي</th>
-              <th>الباقة</th>
-              <th>المدة</th>
-              <th>سعر الباقة</th>
-              <th>اسم الحساب</th>
-              <th>البريد الإلكتروني</th>
-              <th>رقم الهاتف</th>
-              <th>رقم التحويل</th>
-              <th>سكرين التحويل</th>
-              <th>الحالة</th>
-              <th>التاريخ</th>
-              <th>الإجراءات</th>
-            </tr>
-          </thead>
-          <tbody id="ordersTableBody">
-            <tr><td colspan="14" class="loading"><i class="fas fa-spinner fa-spin"></i> جاري تحميل الطلبات...</td></tr>
-          </tbody>
-        </table>
-      </div>
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>رقم الطلب</th>
+            <th>المنصة</th>
+            <th>السعر الأساسي</th>
+            <th>الباقة</th>
+            <th>المدة</th>
+            <th>سعر الباقة</th>
+            <th>اسم الحساب</th>
+            <th>البريد الإلكتروني</th>
+            <th>رقم الهاتف</th>
+            <th>رقم التحويل</th>
+            <th>سكرين التحويل</th>
+            <th>الحالة</th>
+            <th>التاريخ</th>
+            <th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTableBody">
+          <tr><td colspan="14" class="loading"><i class="fas fa-spinner fa-spin"></i> جاري تحميل الطلبات...</td></tr>
+        </tbody>
+      </table>
 
       <div id="message" class="message"></div>
     </div>
@@ -319,19 +196,19 @@ document.addEventListener('DOMContentLoaded', function() {
         : 'لا يوجد';
 
       row.innerHTML = `
-        <td class="cell-ellipsis sm" title="${String(order.id || '')}">${String(order.id || '').substring(0, 8)}...</td>
-        <td class="cell-ellipsis md" title="${order.subscriptionName || ''}">${order.subscriptionName || '—'}</td>
+        <td>${String(order.id || '').substring(0, 8)}...</td>
+        <td>${order.subscriptionName || '—'}</td>
         <td>${basePrice} جنيه</td>
-        <td class="cell-clamp-2" title="${planName || ''}">${planName}</td>
-        <td class="cell-ellipsis sm" title="${planDuration || ''}">${planDuration}</td>
+        <td>${planName}</td>
+        <td>${planDuration}</td>
         <td>${planPrice} جنيه</td>
-        <td class="cell-ellipsis md" title="${order.accountName || ''}">${order.accountName || '—'}</td>
-        <td class="cell-ellipsis lg" title="${order.email || ''}">${order.email || '—'}</td>
-        <td class="cell-ellipsis md" title="${order.phone || ''}">${order.phone || '—'}</td>
-        <td class="cell-ellipsis sm" title="${order.transferNumber || ''}">${order.transferNumber || '—'}</td>
+        <td>${order.accountName || '—'}</td>
+        <td>${order.email || '—'}</td>
+        <td>${order.phone || '—'}</td>
+        <td>${order.transferNumber || '—'}</td>
         <td>${screenshotLink}</td>
         <td><span class="${statusClass}">${statusText}</span></td>
-        <td class="cell-ellipsis md" title="${date}">${date}</td>
+        <td>${date}</td>
         <td>
           <div class="action-buttons">
             ${order.status !== 'completed' ? `<button class="btn btn-success" onclick="updateOrderStatus('${order.id}', 'completed')">إكمال</button>` : ''}
@@ -346,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function updateStats(orders) {
     document.getElementById('totalOrders').textContent = orders.length;
-    document.getElementById('pendingOrders').textContent = orders.filter(o => (o.status || 'pending') === 'pending').length;
+    document.getElementById('pendingOrders').textContent = orders.filter(o => o.status === 'pending').length;
     document.getElementById('completedOrders').textContent = orders.filter(o => o.status === 'completed').length;
     document.getElementById('cancelledOrders').textContent = orders.filter(o => o.status === 'cancelled').length;
   }
@@ -416,6 +293,5 @@ document.addEventListener('DOMContentLoaded', function() {
   setInterval(loadOrders, 30000);
 });
 </script>
-
 </body>
 </html>
