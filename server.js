@@ -156,12 +156,12 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/login.html', csrfProtection, (req, res) => {
+app.get('/login', csrfProtection, (req, res) => {
   res.cookie('XSRF-TOKEN', req.csrfToken(), { httpOnly: false, sameSite: 'lax', secure: false });
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-app.get('/dashboard.html', (req, res, next) => {
+app.get('/dashboard', (req, res, next) => {
   const token = req.cookies.token;
   if (!token) return res.redirect('/login.html');
 
